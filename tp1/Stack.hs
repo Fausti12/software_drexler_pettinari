@@ -27,9 +27,9 @@ netS (Sta listPalets _ ) = sumWeights listPalets (length(listPalets) - 1)
 holdsS :: Stack -> Palet -> Route -> Bool -- indica si la pila puede aceptar el palet considerando las ciudades en la ruta
 -- debo chequear free cells? , chequear si ciudad dest de Palet no está en lista ciudades en Route?
 check lastPalet newPal rou = inOrderR(rou destinationP(lastPalet) destinationP(newPal)) -- True si newPal dest está después
-holdsS (Sta listPalets capacity) pal rou | freeCellsS (Sta listPalets capacity ) - netP(pal) <= 0 = False
-                                          | destinationP(last listPalets) == destinationP pal = True  
-                                          | otherwise = inOrderR rou (destinationP(last listPalets)) (destinationP pal)
+holdsS (Sta listPalets capacity) pal rou | freeCellsS (Sta listPalets capacity ) <= 0 = False
+                                          | destinationP(last listPalets) == destinationP pal || freeCellsS(Sta listPalets capacity) == capacity = True  
+                                          | otherwise = inOrderR rou (destinationP pal) (destinationP(last listPalets)) 
 -- CON CHEQUEAR CON ULT PALET APILADO SERÍA SUFICIENTE
 
 
@@ -37,7 +37,8 @@ popS :: Stack -> String -> Stack          -- quita del tope los paletes con dest
 -- voy sacando desde atrás para adelante hasta que ciudad destino de algún palet cambie
 -- como antes ya me aseguro que se apilen bien los palets, puedo simplemente buscar con "elem"= city hasta que de False?
 countDestPalets:: [Palet] -> String -> Int
-countDestPalets listPalets city | destinationP(last(listPalets)) == city = 1 + countDestPalets (init listPalets) city
+countDestPalets listPalets city | null listPalets = 0
+                                | destinationP(last(listPalets)) == city = 1 + countDestPalets (init listPalets) city
                                 | otherwise = 0
 
 
