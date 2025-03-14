@@ -21,7 +21,8 @@ netS :: Stack -> Int                      -- responde el peso neto de los palete
 sumWeights :: [Palet] -> Int -> Int
 sumWeights listPalets 0 = netP(listPalets !! 0)
 sumWeights listPalets n = netP(listPalets !! n) + sumWeights listPalets (n-1)
-netS (Sta listPalets _ ) = sumWeights listPalets (length(listPalets) - 1)
+netS (Sta listPalets _ )  | null listPalets = 0                                 -- si la lista está vacía, el peso es 0 (no hay palets)
+                          | otherwise = sumWeights listPalets (length(listPalets) - 1) -- si no, sumo los pesos de los palets
 
 
 holdsS :: Stack -> Palet -> Route -> Bool -- indica si la pila puede aceptar el palet considerando las ciudades en la ruta

@@ -14,6 +14,7 @@ createStackList :: Int -> Int -> [Stack]
 createStackList 1 height = [newS height]
 createStackList numBays height  = [newS height] ++ createStackList (numBays - 1) height 
 newT numBays height route = Tru (createStackList numBays height) route
+-- SI PASO 0 BAHÍAS ESTO SE ROMPE
 
 freeCellsT :: Truck -> Int            -- responde la celdas disponibles en el camion
 sumCells :: [Stack] -> Int -> Int
@@ -26,7 +27,8 @@ loadT :: Truck -> Palet -> Truck      -- carga un palet en el camion
 iterateStacks :: [Stack] -> Palet -> Route -> [Stack]
 -- itero los stacks y si uno tiene una ciudad que va después de la de mi palet o no tiene nada (chequeco con holdsS), apilo en ese stack (con StackS)
 -- iterateStacks [] pal _ = [pal] -- si no hay stacks, devuelvo lista con el palet
-iterateStacks stackL pal rou  | null stackL = [stackS (newS 1) pal] -- si no hay stacks, devuelvo lista con el palet
+iterateStacks stackL pal rou  | null stackL = [] -- si no hay stacks, devuelvo lista vacía
+                              | (netP pal + netS (head stackL)) > 10 = [head stackL] ++ iterateStacks (tail stackL) pal rou -- si el palet pesa más de 10 toneladas, no lo cargo
                               | holdsS (head stackL) pal rou = [stackS (head stackL) pal] ++ (tail stackL) -- si holdsS es True, apilo en stack y devuelvo lista con ese stack y el resto
                               | otherwise = [head stackL] ++ iterateStacks (tail stackL) pal rou -- si holdsS es False, devuelvo lista con el stack y sigo iterando
 loadT (Tru stackL rou) pal = Tru (iterateStacks stackL pal rou) rou
