@@ -9,10 +9,10 @@ newR cities = Rou cities
 inOrderR :: Route -> String -> String -> Bool  -- indica si la primer ciudad consultada esta antes que la segunda ciudad en la ruta
 positionCity :: [String] -> String -> Int
 positionCity cities city
-    | null indices = -1
-    | otherwise = head indices
+    | null index = -1
+    | otherwise = head index
   where
-    indices = [y | y <- [0..length(cities)-1], cities !! y == city]
+    index = [y | y <- [0..length(cities)-1], cities !! y == city]
 -- Buscar forma que funcione si NO HAY COINCIDENCIAS
 
 inOrderR (Rou cities) city1 city2

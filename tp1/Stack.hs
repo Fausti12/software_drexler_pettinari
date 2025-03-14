@@ -21,13 +21,14 @@ netS :: Stack -> Int                      -- responde el peso neto de los palete
 sumWeights :: [Palet] -> Int -> Int
 sumWeights listPalets 0 = netP(listPalets !! 0)
 sumWeights listPalets n = netP(listPalets !! n) + sumWeights listPalets (n-1)
+
 netS (Sta listPalets _ ) = sumWeights listPalets (length(listPalets) - 1)
 
 
 holdsS :: Stack -> Palet -> Route -> Bool -- indica si la pila puede aceptar el palet considerando las ciudades en la ruta
 -- debo chequear free cells? , chequear si ciudad dest de Palet no está en lista ciudades en Route?
 check lastPalet newPal rou = inOrderR(rou destinationP(lastPalet) destinationP(newPal)) -- True si newPal dest está después
-holdsS (Sta listPalets capacity) pal rou | freeCellsS (Sta listPalets capacity ) <= 0 = False
+holdsS (Sta listPalets capacity) pal rou | freeCellsS (Sta listPalets capacity ) == 0 = False
                                           | destinationP(last listPalets) == destinationP pal || freeCellsS(Sta listPalets capacity) == capacity = True  
                                           | otherwise = inOrderR rou (destinationP pal) (destinationP(last listPalets)) 
 -- CON CHEQUEAR CON ULT PALET APILADO SERÍA SUFICIENTE
