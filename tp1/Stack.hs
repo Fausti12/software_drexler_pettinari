@@ -27,8 +27,9 @@ netS (Sta listPalets _ ) = sumWeights listPalets (length(listPalets) - 1)
 holdsS :: Stack -> Palet -> Route -> Bool -- indica si la pila puede aceptar el palet considerando las ciudades en la ruta
 -- debo chequear free cells? , chequear si ciudad dest de Palet no está en lista ciudades en Route?
 check lastPalet newPal rou = inOrderR(rou destinationP(lastPalet) destinationP(newPal)) -- True si newPal dest está después
-holdsS (Sta listPalets capacity) pal rou | freeCellsS (Sta listPalets capacity ) <= 0 = False
-                                          | destinationP(last listPalets) == destinationP pal || freeCellsS(Sta listPalets capacity) == capacity = True  
+holdsS (Sta listPalets capacity) pal rou  | freeCellsS (Sta listPalets capacity ) <= 0 = False
+                                          | freeCellsS(Sta listPalets capacity) == capacity = True    -- esta condición va primero que la siguiente porque si la lista está vacía, no puedo comparar con el último palet y da error
+                                          | destinationP(last listPalets) == destinationP pal = True
                                           | otherwise = inOrderR rou (destinationP pal) (destinationP(last listPalets)) 
 -- CON CHEQUEAR CON ULT PALET APILADO SERÍA SUFICIENTE
 
