@@ -1,4 +1,4 @@
-module Truck ( Truck, newT, freeCellsT, loadT)--, unloadT, netT )
+module Truck ( Truck, newT, freeCellsT, loadT, unloadT)--, netT )
   where
 
 import Palet
@@ -33,7 +33,14 @@ iterateStacks stackL pal rou  | null stackL = [] -- si no hay stacks, devuelvo l
                               | otherwise = [head stackL] ++ iterateStacks (tail stackL) pal rou -- si holdsS es False, devuelvo lista con el stack y sigo iterando
 loadT (Tru stackL rou) pal = Tru (iterateStacks stackL pal rou) rou
 
---unloadT :: Truck -> String -> Truck   -- responde un camion al que se le han descargado los paletes que podían descargarse en la ciudad
+unloadT :: Truck -> String -> Truck   -- responde un camion al que se le han descargado los paletes que podían descargarse en la ciudad
+popT :: [Stack] -> String -> [Stack]
+popT stackL city  | null stackL = []
+                  | otherwise = [popS (head stackL) city] ++ popT (tail stackL) city
+unloadT (Tru stackL rou) city = Tru (popT stackL city) rou
+
+
+
 --netT :: Truck -> Int                  -- responde el peso neto en toneladas de los paletes en el camion
 
 
