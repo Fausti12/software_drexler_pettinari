@@ -1,4 +1,4 @@
-module Truck ( Truck, newT, freeCellsT, loadT, unloadT)--, netT )
+module Truck ( Truck, newT, freeCellsT, loadT, unloadT, netT )
   where
 
 import Palet
@@ -41,6 +41,6 @@ unloadT (Tru stackL rou) city = Tru (popT stackL city) rou
 
 
 
---netT :: Truck -> Int                  -- responde el peso neto en toneladas de los paletes en el camion
-
-
+netT :: Truck -> Int                  -- responde el peso neto en toneladas de los paletes en el camion
+netT (Tru stackL rou) | null stackL = 0
+                      | otherwise = netS (head stackL) + netT (Tru (tail stackL) rou)
