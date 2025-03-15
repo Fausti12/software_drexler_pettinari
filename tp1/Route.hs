@@ -22,3 +22,8 @@ inOrderR (Rou cities) city1 city2
   where
     pos1 = positionCity cities city1
     pos2 = positionCity cities city2 
+
+
+
+inRouteR :: Route -> String -> Bool -- indica si la ciudad consultada está en la ruta
+inRouteR (Rou cities) city = elem city cities

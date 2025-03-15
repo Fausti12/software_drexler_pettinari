@@ -42,7 +42,9 @@ iterateStacks (s:ss) pal rou
     | otherwise = s : iterateStacks ss pal rou  -- si holdsS es False, devuelvo lista con el stack y sigo iterando
 
 loadT :: Truck -> Palet -> Truck      -- carga un palet en el camion
-loadT (Tru stackL rou) pal = Tru (iterateStacks stackL pal rou) rou
+loadT (Tru stackL rou) pal | not (inRouteR rou (destinationP pal)) = error "City not in route"  -- Verifica si la ciudad destino del palet está en la ruta
+                           | otherwise = Tru (iterateStacks stackL pal rou) rou
+
 
 unloadStacks :: [Stack] -> String -> [Stack]
 unloadStacks [] _ = []

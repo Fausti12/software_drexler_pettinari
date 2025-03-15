@@ -30,7 +30,8 @@ holdsS :: Stack -> Palet -> Route -> Bool -- indica si la pila puede aceptar el 
 -- debo chequear free cells? , chequear si ciudad dest de Palet no está en lista ciudades en Route?
 check lastPalet newPal rou = inOrderR(rou destinationP(lastPalet) destinationP(newPal)) -- True si newPal dest está después
 holdsS (Sta listPalets capacity) pal rou | freeCellsS (Sta listPalets capacity ) == 0 = False
-                                          | freeCellsS(Sta listPalets capacity) == capacity = True || destinationP(last listPalets) == destinationP pal 
+                                          | not (inRouteR rou (destinationP pal)) = False
+                                          | freeCellsS(Sta listPalets capacity) == capacity || destinationP(last listPalets) == destinationP pal = True 
                                           | otherwise = inOrderR rou (destinationP pal) (destinationP(last listPalets)) 
 -- CON CHEQUEAR CON ULT PALET APILADO SERÍA SUFICIENTE
 
