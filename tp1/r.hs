@@ -6,3 +6,15 @@ iterateStacks stackL pal rou  | null stackL = [] -- si no hay stacks, devuelvo l
                               | otherwise = [head stackL] ++ iterateStacks (tail stackL) pal rou -- si holdsS es False, devuelvo lista con el stack y sigo iterando
 
 -- EL problema es que se puede hacer head/tail de algo nulo 
+
+
+-- updateStack :: [Stack] -> Palet -> Int -> Stack 
+-- updateStack listStack palet index = stackS (listStack !! index) palet
+
+--loadT :: Truck -> Palet -> Truck      -- carga un palet en el camion
+-- hay que llamar holdsS por c/stack
+--modifyStack (Tru listStack route) palet | null stackHolds = error "Truck can´t load this Palet"
+                              -- | otherwise = Tru (updateStack listStack palet (head stackHolds)) route
+ --   where
+   --   stackHolds = [y | y <- [0..length(listStack)-1], holdsS (listStack !! y) palet route == True]
+    

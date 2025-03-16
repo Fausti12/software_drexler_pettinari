@@ -13,7 +13,10 @@ freeCellsS :: Stack -> Int                -- responde con las celdas disponibles
 freeCellsS (Sta listPalets capacity) =  capacity - length(listPalets)
 
 stackS :: Stack -> Palet -> Stack         -- apila el palet indicado en la pila
+-- debería llamar a holdsS? creo que no pq el usuario primero ve si se puede cargar y luego llama a stackS?
 stackS (Sta listPalets capacity ) palet =  Sta (listPalets ++ [palet]) capacity
+
+
 
 sumWeights :: [Palet] -> Int
 sumWeights [] = 0
@@ -24,17 +27,24 @@ netS (Sta listPalets _ ) = sumWeights listPalets
 
 
 holdsS :: Stack -> Palet -> Route -> Bool -- indica si la pila puede aceptar el palet considerando las ciudades en la ruta
+-- debo chequear free cells? , chequear si ciudad dest de Palet no está en lista ciudades en Route?
+check lastPalet newPal rou = inOrderR(rou destinationP(lastPalet) destinationP(newPal)) -- True si newPal dest está después
 holdsS (Sta listPalets capacity) pal rou | freeCellsS (Sta listPalets capacity ) == 0 = False
                                           | not (inRouteR rou (destinationP pal)) = False
                                           | freeCellsS(Sta listPalets capacity) == capacity || destinationP(last listPalets) == destinationP pal = True 
                                           | otherwise = inOrderR rou (destinationP pal) (destinationP(last listPalets)) 
+-- CON CHEQUEAR CON ULT PALET APILADO SERÍA SUFICIENTE
 
 
-
+popS :: Stack -> String -> Stack          -- quita del tope los paletes con destino en la ciudad indicada
+-- voy sacando desde atrás para adelante hasta que ciudad destino de algún palet cambie
+-- como antes ya me aseguro que se apilen bien los palets, puedo simplemente buscar con "elem"= city hasta que de False?
 countDestPalets:: [Palet] -> String -> Int
 countDestPalets listPalets city | null listPalets = 0
                                 | destinationP(last(listPalets)) == city = 1 + countDestPalets (init listPalets) city
                                 | otherwise = 0
 
-popS :: Stack -> String -> Stack          -- quita del tope los paletes con destino en la ciudad indicada
+
 popS (Sta listPalets capacity) city = Sta (take(length(listPalets) - countDestPalets listPalets city)  listPalets) capacity
+-- poner countDestPalets (listPalets city) -> toma listP como función (MAL)
+-- IMPORTANTE: pongo en args a (Sta listPalets capacity) si uso sus partes solamente?

@@ -40,8 +40,6 @@ loadT (Tru stackL rou) pal | not (inRouteR rou (destinationP pal)) = error "City
 unloadStacks :: [Stack] -> String -> [Stack]
 unloadStacks [] _ = []
 unloadStacks (s:ss) dest = popS s dest : unloadStacks ss dest
---no hace falta chequear si 
-
 
 unloadT :: Truck -> String -> Truck   -- responde un camion al que se le han descargado los paletes que podían descargarse en la ciudad
 unloadT (Tru stackL rou) dest = Tru (unloadStacks stackL dest) rou
