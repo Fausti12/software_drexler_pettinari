@@ -24,7 +24,7 @@ sumFreeCells listStack n = freeCellsS(listStack !! n) + sumFreeCells listStack (
 freeCellsT (Tru listStack _) = sumFreeCells listStack (length listStack-1)
 
 
--- VER SI DEVOLVER ERROR O = TRUCK CON EL PALET CARGADO
+-- VER SI DEVOLVER ERROR O = TRUCK CON EL PALET NO CARGADO
 iterateStacks :: [Stack] -> Palet -> Route -> [Stack]
 iterateStacks [] _ _ = []  -- si no hay stacks, devuelvo lista vacía
 iterateStacks (s:ss) pal rou
