@@ -25,7 +25,5 @@ positionCity cities city
 -- Buscar forma que funcione si NO HAY COINCIDENCIAS
 
 
-
-
 inRouteR :: Route -> String -> Bool -- indica si la ciudad consultada está en la ruta
 inRouteR (Rou cities) city = elem city cities
