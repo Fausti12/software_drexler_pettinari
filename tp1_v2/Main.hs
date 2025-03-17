@@ -26,10 +26,10 @@ runTests =
     , testF (loadT truck1 paletPesado)
 
       -- Test 3: No se puede subir palet porque no hay stack disponible
-    , testF (loadT truckFull palet1)
+    , testF (loadT truckFull3 palet1)
 
       -- Test 4: Todos los stacks están llenos
-    , testF (loadT truckFull palet2)
+    , testF (loadT truckFull3 palet2)
 
         -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
     , testF (loadT truck2 paletOutRoute)
@@ -44,8 +44,11 @@ paletOutRoute = newP "CiudadD" 3  -- Ciudad destino fuera de la ruta
 route = newR ["CiudadA", "CiudadB", "CiudadC"]
 
 truck1 = newT 2 10 route  -- Truck con 2 Stacks de altura 10 cada uno
-truckFull = foldl loadT truck1 (replicate 2 palet1)  -- Truck lleno
+truckFull = newT 2 1 route  -- Truck con 2 Stacks de altura 2 cada uno
 truck2 = newT 1 5 route  
+
+truckFull2 = loadT truckFull palet1
+truckFull3 = loadT truckFull2 palet2
 
 main :: IO ()
 main = print runTests

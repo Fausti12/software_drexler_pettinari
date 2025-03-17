@@ -1,4 +1,4 @@
-module Truck ( Truck, newT, freeCellsT, loadT, unloadT) --netT )
+module Truck ( Truck, newT, freeCellsT, loadT, unloadT, netT )
   where
 
 import Palet
@@ -28,13 +28,16 @@ freeCellsT (Tru listStack _) = sumFreeCells listStack (length listStack-1)
 iterateStacks :: [Stack] -> Palet -> Route -> [Stack]
 iterateStacks [] _ _ = []  -- si no hay stacks, devuelvo lista vacía
 iterateStacks (s:ss) pal rou
-    | (netP pal + netS s) > 10 = s : iterateStacks ss pal rou  -- si el palet pesa más de 10 toneladas, no lo cargo
+    | (netP pal + netS s) > 10 = s : iterateStacks ss pal rou  -- si bahía pesara más de 10 toneladas, no lo cargo
     | holdsS s pal rou = stackS s pal : ss  -- si holdsS es True, apilo en stack y devuelvo lista con ese stack y el resto
     | otherwise = s : iterateStacks ss pal rou  -- si holdsS es False, devuelvo lista con el stack y sigo iterando
 
 loadT :: Truck -> Palet -> Truck      -- carga un palet en el camion
 loadT (Tru stackL rou) pal | not (inRouteR rou (destinationP pal)) = error "City not in route"  -- Verifica si la ciudad destino del palet está en la ruta
+                           | newStacks == stackL = error "Sin espacio suficiente"
                            | otherwise = Tru (iterateStacks stackL pal rou) rou
+                        where 
+                            newStacks = iterateStacks stackL pal rou 
 
 
 unloadStacks :: [Stack] -> String -> [Stack]
