@@ -31,8 +31,15 @@ runTests =
       -- Test 4: Todos los stacks están llenos
     , testF (loadT truckFull3 palet2)
 
-        -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
+      -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
     , testF (loadT truck2 paletOutRoute)
+
+      -- Test 6: Saltearse la descarga en una ciudad, y descargar los de otra que los tiene tapados (descargar en B antes que en A)
+    , unloadT truckTapado "CiudadB" == truckTapado  -- si está tapado, no se puede descargar; por lo tanto el camión sigue igual
+
+      -- Test 7: Descargo igual que antes ("salteándome una ciudad"), pero sin estar tapado el palet de la ciudadB
+    , unloadT truckFull3 "CiudadB" /= truckFull3  -- si no está tapado, se puede descargar; por lo tanto el camión queda con un palet menos
+
     ]
 
 -- Definiciones para testear
@@ -49,6 +56,10 @@ truck2 = newT 1 5 route
 
 truckFull2 = loadT truckFull palet1
 truckFull3 = loadT truckFull2 palet2
+
+truckTap0 = newT 1 2 route -- este truck va a quedar con palets tapados por otros cuando los querramos descargar
+truckTap1 = loadT truckTap0 palet1
+truckTapado = loadT truckTap1 palet2
 
 main :: IO ()
 main = print runTests

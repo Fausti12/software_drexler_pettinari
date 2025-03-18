@@ -45,15 +45,15 @@ unloadStacks [] _ = []
 unloadStacks (s:ss) dest = popS s dest : unloadStacks ss dest
 
 
-findIndexDestiny :: Route -> String -> [Int]
-findIndexDestiny route dest =  [y | y <- [0..length(route)-1], route !! y == dest]
+-- findIndexDestiny :: Route -> String -> [Int]
+-- findIndexDestiny route dest =  [y | y <- [0..length(route)-1], route !! y == dest]
 
 
 unloadT :: Truck -> String -> Truck   -- responde un camion al que se le han descargado los paletes que podían descargarse en la ciudad
-unloadT (Tru stackL rou) dest = Tru (unloadStacks stackL dest) newR (drop ((findIndexDestiny rou dest) !! 0 + 1) cities)
-    where
-    (Rou cities) = rou
---unloadT (Tru stackL rou) dest = Tru (unloadStacks stackL dest) rou 
+--unloadT (Tru stackL rou) dest = Tru (unloadStacks stackL dest) newR (drop ((findIndexDestiny rou dest) !! 0 + 1) cities)
+  --  where
+    --(Rou cities) = rou
+unloadT (Tru stackL rou) dest = Tru (unloadStacks stackL dest) rou 
 -- se podría sacar el 1er elemento de route (quedarnos solo con lo que va después de la ruta que nos pasan)
 
 
