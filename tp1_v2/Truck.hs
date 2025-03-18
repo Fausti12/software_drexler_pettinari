@@ -8,22 +8,22 @@ import Foreign (free)
 
 data Truck = Tru [ Stack ] Route deriving (Eq, Show)
 
-createStackList :: Int -> Int -> [Stack]
-createStackList 1 height = [newS height]
-createStackList numBays height  = [newS height] ++ createStackList (numBays - 1) height 
+--createStackList :: Int -> Int -> [Stack]
+--createStackList 1 height = [newS height]
+--createStackList numBays height  = [newS height] ++ createStackList (numBays - 1) height 
 
 newT :: Int -> Int -> Route -> Truck  -- construye un camion según una cantidad de bahias, la altura de las mismas y una ruta
-newT numBays height route = Tru (createStackList numBays height) route
+newT numBays height route = Tru (replicate numBays (newS height)) route
+--newT numBays height route = Tru (createStackList numBays height) route
 
-
-sumFreeCells:: [Stack] -> Int -> Int
+--sumFreeCells:: [Stack] -> Int -> Int
 --sumFreeCells [] _ = 0 -- ver si es necesario 
-sumFreeCells listStack 0 = freeCellsS(head listStack)
-sumFreeCells listStack n = freeCellsS(listStack !! n) + sumFreeCells listStack (n-1)
+--sumFreeCells listStack 0 = freeCellsS(head listStack)
+--sumFreeCells listStack n = freeCellsS(listStack !! n) + sumFreeCells listStack (n-1)
 
 freeCellsT :: Truck -> Int            -- responde la celdas disponibles en el camion
-freeCellsT (Tru listStack _) = sumFreeCells listStack (length listStack-1)
-
+freeCellsT (Tru listStack _) = sum(map freeCellsS listStack)
+--freeCellsT (Tru listStack _) = sumFreeCells listStack (length listStack-1)
 
 -- VER SI DEVOLVER ERROR O = TRUCK CON EL PALET NO CARGADO
 iterateStacks :: [Stack] -> Palet -> Route -> [Stack]
@@ -42,8 +42,9 @@ loadT (Tru stackL rou) pal | not (inRouteR rou (destinationP pal)) = error "City
 
 
 unloadStacks :: [Stack] -> String -> [Stack]
-unloadStacks [] _ = []
-unloadStacks (s:ss) dest = popS s dest : unloadStacks ss dest
+--unloadStacks [] _ = []
+--unloadStacks (s:ss) dest = popS s dest : unloadStacks ss dest
+unloadStacks listStacks dest = map (\x -> popS x dest) listStacks  -- aplica popS a cada stack de la lista
 
 
 --findIndexDestiny :: Route -> String -> [Int]
@@ -55,7 +56,7 @@ unloadT :: Truck -> String -> Truck   -- responde un camion al que se le han des
   --  where
     --(Rou cities) = rou
 unloadT (Tru stackL rou) dest = Tru (unloadStacks stackL dest) rou 
--- se podría sacar el 1er elemento de route (quedarnos solo con lo que va después de la ruta que nos pasan)
+--unloadT (Tru stackL rou) dest = Tru (replicate (length stackL) (popS (head stackL) dest)) rou
 
 
 sumWeightsBays :: [Stack] -> Int
