@@ -19,36 +19,55 @@ testF action = unsafePerformIO $ do
 -- Tests
 runTests :: [Bool]
 runTests = 
-    [ -- Test 1: Se permite subir un palet a un stack disponible
-      not $ testF (loadT truck1 palet1)
+    [ 
+      -- Test: Crear instancia de ruta con lista vacía
+      testF (newR [])
 
-      -- Test 2: No se puede subir palet porque excede peso del Truck
+      -- Test: Crear instancia de ruta con lista de ciudades
+    , not $ testF (newR ["CiudadA", "CiudadB", "CiudadC"])
+
+      -- Test: Ciudad 1 está antes que Ciudad 2 en la ruta
+    , not $ testF (inOrderR route "CiudadA" "CiudadC")
+
+      -- Test: Ciudad 1 no está antes que Ciudad 2 en la ruta  VER SI ESTO IRÍA
+    , not $ testF (inOrderR route "CiudadC" "CiudadA")
+      
+      -- Test 1: Se permite subir un palet a un stack disponible
+    ,  not $ testF (loadT truck1 paletB)
+
+      -- Test 2: No se puede subir palet porque excede peso de la bahía
     , testF (loadT truck1 paletPesado)
 
-      -- Test 3: No se puede subir palet porque no hay stack disponible
-    , testF (loadT truckFull3 palet1)
+      -- Test 3: No se puede subir palet porque todos los stacks están llenos
+    , testF (loadT truckFull3 paletB)
 
-      -- Test 4: Todos los stacks están llenos
-    , testF (loadT truckFull3 palet2)
+      -- Test 4: No se puede subir palet porque no hay stack que lo acepte (por orden de ciudades)
+    , testF (loadT truckNotHoldsC paletC)
 
         -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
     , testF (loadT truck2 paletOutRoute)
     ]
 
 -- Definiciones para testear
-palet1 = newP "CiudadB" 3
-palet2 = newP "CiudadA" 4
+paletB = newP "CiudadB" 3
+paletA = newP "CiudadA" 4
+paletC = newP "CiudadC" 2
 paletPesado = newP "CiudadC" 50  -- Excede el peso permitido del truck
-paletOutRoute = newP "CiudadD" 3  -- Ciudad destino fuera de la ruta
+paletOutRoute = newP "CiudadE" 3  -- Ciudad destino fuera de la ruta
 
-route = newR ["CiudadA", "CiudadB", "CiudadC"]
+route = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD"]
 
 truck1 = newT 2 10 route  -- Truck con 2 Stacks de altura 10 cada uno
-truckFull = newT 2 1 route  -- Truck con 2 Stacks de altura 2 cada uno
+truckFull = newT 2 1 route  
 truck2 = newT 1 5 route  
+truck3 = newT 2 2 route
 
-truckFull2 = loadT truckFull palet1
-truckFull3 = loadT truckFull2 palet2
+truckFull2 = loadT truckFull paletB
+truckFull3 = loadT truckFull2 paletA
+
+truck4 = loadT truck3 paletA
+truckNotHoldsC = loadT truck4 paletB
+
 
 main :: IO ()
 main = print runTests
