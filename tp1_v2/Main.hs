@@ -19,19 +19,32 @@ testF action = unsafePerformIO $ do
 -- Tests
 runTests :: [Bool]
 runTests = 
-    [ -- Test 1: Se permite subir un palet a un stack disponible
-      not $ testF (loadT truck1 palet1)
+    [ 
+      -- Test: Crear instancia de ruta con lista vacía
+      testF (newR [])
 
-      -- Test 2: No se puede subir palet porque excede peso del Truck
+      -- Test: Crear instancia de ruta con lista de ciudades
+    , not $ testF (newR ["CiudadA", "CiudadB", "CiudadC"])
+
+      -- Test: Ciudad 1 está antes que Ciudad 2 en la ruta
+    , not $ testF (inOrderR route "CiudadA" "CiudadC")
+
+      -- Test: Ciudad 1 no está antes que Ciudad 2 en la ruta  VER SI ESTO IRÍA
+    , not $ testF (inOrderR route "CiudadC" "CiudadA")
+      
+      -- Test 1: Se permite subir un palet a un stack disponible
+    ,  not $ testF (loadT truck1 paletB)
+
+      -- Test 2: No se puede subir palet porque excede peso de la bahía
     , testF (loadT truck1 paletPesado)
 
-      -- Test 3: No se puede subir palet porque no hay stack disponible
-    , testF (loadT truckFull3 palet1)
+      -- Test 3: No se puede subir palet porque todos los stacks están llenos
+    , testF (loadT truckFull3 paletB)
 
-      -- Test 4: Todos los stacks están llenos
-    , testF (loadT truckFull3 palet2)
+      -- Test 4: No se puede subir palet porque no hay stack que lo acepte (por orden de ciudades)
+    , testF (loadT truckNotHoldsC paletC)
 
-      -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
+        -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
     , testF (loadT truck2 paletOutRoute)
 
       -- Test 6: Saltearse la descarga en una ciudad, y descargar los de otra que los tiene tapados (descargar en B antes que en A)
@@ -39,6 +52,8 @@ runTests =
 
       -- Test 7: Descargo igual que antes ("salteándome una ciudad"), pero sin estar tapado el palet de la ciudadB
     , unloadT truckFull3 "CiudadB" /= truckFull3  -- si no está tapado, se puede descargar; por lo tanto el camión queda con un palet menos
+
+
 
     ]
 
@@ -56,6 +71,9 @@ truck2 = newT 1 5 route
 
 truckFull2 = loadT truckFull palet1
 truckFull3 = loadT truckFull2 palet2
+
+truck4 = loadT truck3 paletA
+truckNotHoldsC = loadT truck4 paletB
 
 truckTap0 = newT 1 2 route -- este truck va a quedar con palets tapados por otros cuando los querramos descargar
 truckTap1 = loadT truckTap0 palet1
