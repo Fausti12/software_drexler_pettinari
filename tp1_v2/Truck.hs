@@ -13,7 +13,9 @@ createStackList 1 height = [newS height]
 createStackList numBays height  = [newS height] ++ createStackList (numBays - 1) height 
 
 newT :: Int -> Int -> Route -> Truck  -- construye un camion según una cantidad de bahias, la altura de las mismas y una ruta
-newT numBays height route = Tru (createStackList numBays height) route
+newT numBays height route | numBays < 1 = error "La cantidad de bahías debe ser mayor a 0"
+                          | height < 1 = error "La altura de las bahías debe ser mayor a 0"
+                          | otherwise = Tru (createStackList numBays height) route
 
 freeCellsT :: Truck -> Int            -- responde la celdas disponibles en el camion
 sumFreeCells:: [Stack] -> Int -> Int

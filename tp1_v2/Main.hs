@@ -16,12 +16,37 @@ testF action = unsafePerformIO $ do
         isException :: SomeException -> Maybe ()
         isException _ = Just ()
 
+-- Definiciones para testear
+paletB = newP "CiudadB" 3
+paletA = newP "CiudadA" 4
+paletC = newP "CiudadC" 2
+paletPesado = newP "CiudadC" 50  -- Excede el peso permitido del truck
+paletOutRoute = newP "CiudadE" 3  -- Ciudad destino fuera de la ruta
+
+route = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD"]
+
+truck1 = newT 2 10 route  -- Truck con 2 Stacks de altura 10 cada uno
+truckFull = newT 2 1 route  
+truck2 = newT 1 5 route  
+truck3 = newT 2 2 route
+
+truckFull2 = loadT truckFull paletB
+truckFull3 = loadT truckFull2 paletA
+
+truck4 = loadT truck3 paletA
+truckNotHoldsC = loadT truck4 paletB
+
+truckTap0 = newT 1 2 route -- este truck va a quedar con palets tapados por otros cuando los querramos descargar
+truckTap1 = loadT truckTap0 paletB
+truckTapado = loadT truckTap1 paletA
+
+
 -- Tests
 runTests :: [Bool]
 runTests = 
     [ 
       -- Test 1: Crear instancia de ruta con lista vacía
-      testF (newR [])
+      testF (newR [])   -- Debería fallar porque la lista de ciudades vacía no tiene sentido.
 
       -- Test 2: Crear instancia de ruta con lista de ciudades
     , not $ testF (newR ["CiudadA", "CiudadB", "CiudadC"])
@@ -53,33 +78,27 @@ runTests =
       -- Test 11: Descargo igual que antes ("salteándome una ciudad"), pero sin estar tapado el palet de la ciudadB
     , unloadT truckFull3 "CiudadB" /= truckFull3  -- si no está tapado, se puede descargar; por lo tanto el camión queda con un palet menos
 
+      -- Test 12: Descargar un palet en una ciudad que no está en la ruta
+    , unloadT truckFull3 "CiudadE" == truckFull3  -- si la ciudad no está en la ruta, no se puede descargar; por lo tanto el camión sigue igual
+
+      -- Test 13: Crear un palet que tenga peso negativo
+    , testF (newP "CiudadA" (-1))
+
+      -- Test 14: Crear un truck con cantidad de stacks negativa o cero 
+    , testF (newT (-1) 10 route)
+
+      -- Test 15: Crear un truck con altura de stack negativa o cero
+    , testF (newT 1 0 route)
+
+      -- Test : Crear un truck con ruta vacía
+    --, testF (newT 1 10 (newR []))
+
+      -- Test 16: Crear un stack con capacidad negativa
+    , testF (newS (-1))
+
 
 
     ]
-
--- Definiciones para testear
-paletB = newP "CiudadB" 3
-paletA = newP "CiudadA" 4
-paletC = newP "CiudadC" 2
-paletPesado = newP "CiudadC" 50  -- Excede el peso permitido del truck
-paletOutRoute = newP "CiudadE" 3  -- Ciudad destino fuera de la ruta
-
-route = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD"]
-
-truck1 = newT 2 10 route  -- Truck con 2 Stacks de altura 10 cada uno
-truckFull = newT 2 1 route  
-truck2 = newT 1 5 route  
-truck3 = newT 2 2 route
-
-truckFull2 = loadT truckFull paletB
-truckFull3 = loadT truckFull2 paletA
-
-truck4 = loadT truck3 paletA
-truckNotHoldsC = loadT truck4 paletB
-
-truckTap0 = newT 1 2 route -- este truck va a quedar con palets tapados por otros cuando los querramos descargar
-truckTap1 = loadT truckTap0 paletB
-truckTapado = loadT truckTap1 paletA
 
 main :: IO ()
 main = print runTests

@@ -4,7 +4,8 @@ module Route ( Route, newR, inOrderR, inRouteR )
 data Route = Rou [ String ] deriving (Eq, Show)
 
 newR :: [ String ] -> Route                    -- construye una ruta segun una lista de ciudades
-newR cities = Rou cities
+newR cities | null cities = error "Empty route"
+            | otherwise = Rou cities
 
 inOrderR :: Route -> String -> String -> Bool  -- indica si la primer ciudad consultada esta antes que la segunda ciudad en la ruta
 inOrderR (Rou cities) city1 city2

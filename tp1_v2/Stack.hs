@@ -7,7 +7,8 @@ import Route
 data Stack = Sta [ Palet ] Int deriving (Eq, Show)
 
 newS :: Int -> Stack                      -- construye una Pila con la capacidad indicada  -> capacidad = cant Palets creo
-newS capacity = Sta [] capacity 
+newS capacity | capacity < 0 = error "La capacidad de la pila debe ser mayor a 0"
+              | otherwise = Sta [] capacity 
 
 freeCellsS :: Stack -> Int                -- responde con las celdas disponibles en la pila
 freeCellsS (Sta listPalets capacity) =  capacity - length(listPalets)
