@@ -20,18 +20,29 @@ testF action = unsafePerformIO $ do
 runTests :: [Bool]
 runTests = 
     [ 
+
+      -- Destino de palet
+     destinationP paletB == "CiudadB"
+
+      -- Peso de palet
+
+    ,  netP paletB == 3 
+
       -- Test: Crear instancia de ruta con lista vacía
-      testF (newR [])
+    ,  testF (newR [])
 
       -- Test: Crear instancia de ruta con lista de ciudades
-    , not $ testF (newR ["CiudadA", "CiudadB", "CiudadC"])
+    ,  not $ testF (newR ["CiudadA", "CiudadB", "CiudadC"])
 
       -- Test: Ciudad 1 está antes que Ciudad 2 en la ruta
-    , not $ testF (inOrderR route "CiudadA" "CiudadC")
+    ,  inOrderR route "CiudadA" "CiudadC" == True
 
       -- Test: Ciudad 1 no está antes que Ciudad 2 en la ruta  VER SI ESTO IRÍA
-    , not $ testF (inOrderR route "CiudadC" "CiudadA")
-      
+    ,  inOrderR route "CiudadC" "CiudadA" == False 
+
+      -- Test: Creación de Truck
+    , freeCellsT truck1 == 20
+
       -- Test 1: Se permite subir un palet a un stack disponible
     ,  not $ testF (loadT truck1 paletB)
 
@@ -44,8 +55,13 @@ runTests =
       -- Test 4: No se puede subir palet porque no hay stack que lo acepte (por orden de ciudades)
     , testF (loadT truckNotHoldsC paletC)
 
-        -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
+      -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
     , testF (loadT truck2 paletOutRoute)
+
+      -- Test: Celdas libres en stack
+    
+
+    -- Test: Celdas libres después de desapilar
     ]
 
 -- Definiciones para testear

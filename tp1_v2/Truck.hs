@@ -59,12 +59,14 @@ unloadT (Tru stackL rou) dest = Tru (unloadStacks stackL dest) rou
 --unloadT (Tru stackL rou) dest = Tru (replicate (length stackL) (popS (head stackL) dest)) rou
 
 
-sumWeightsBays :: [Stack] -> Int
-sumWeightsBays [] = 0
-sumWeightsBays (p:ps) = netS p + sumWeightsBays ps
+--sumWeightsBays :: [Stack] -> Int
+--sumWeightsBays [] = 0
+--sumWeightsBays (p:ps) = netS p + sumWeightsBays ps
 
 
 netT :: Truck -> Int                  -- responde el peso neto en toneladas de los paletes en el camion
-netT (Tru listStack _) = sumWeightsBays listStack
+netT (Tru listStack _) = sum(map netS listStack)
+
+--netT (Tru listStack _) = sumWeightsBays listStack
 
 
