@@ -73,13 +73,14 @@ runTests =
     , testF (loadT truck2 paletOutRoute)
 
       -- Test 10: Saltearse la descarga en una ciudad, y descargar los de otra que los tiene tapados (descargar en B antes que en A)
-    , unloadT truckTapado "CiudadB" == truckTapado  -- si está tapado, no se puede descargar; por lo tanto el camión sigue igual
+    , netT (unloadT truckTapado "CiudadB") == netT (truckTapado)  -- si está tapado, no se puede descargar; por lo tanto el camión sigue igual
 
       -- Test 11: Descargo igual que antes ("salteándome una ciudad"), pero sin estar tapado el palet de la ciudadB
-    , unloadT truckFull3 "CiudadB" /= truckFull3  -- si no está tapado, se puede descargar; por lo tanto el camión queda con un palet menos
+    , netT (unloadT truckFull3 "CiudadB") /= netT (truckFull3)  -- si no está tapado, se puede descargar; por lo tanto el camión queda con un palet menos
 
       -- Test 12: Descargar un palet en una ciudad que no está en la ruta
-    , unloadT truckFull3 "CiudadE" == truckFull3  -- si la ciudad no está en la ruta, no se puede descargar; por lo tanto el camión sigue igual
+      -- No comparar trucks con == 
+      -- unloadT truckFull3 "CiudadE" == truckFull3  -- si la ciudad no está en la ruta, no se puede descargar; por lo tanto el camión sigue igual
 
       -- Test 13: Crear un palet que tenga peso negativo
     , testF (newP "CiudadA" (-1))
