@@ -65,7 +65,7 @@ unloadT (Tru stackL rou) dest = Tru (unloadStacks stackL dest) rou
 
 
 netT :: Truck -> Int                  -- responde el peso neto en toneladas de los paletes en el camion
-netT (Tru listStack _) = sum(map netS listStack)
+netT (Tru listStack _) = sum (map netS listStack)
 
 --netT (Tru listStack _) = sumWeightsBays listStack
 
