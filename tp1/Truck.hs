@@ -22,7 +22,7 @@ iterateStacks (s:ss) pal rou
     | otherwise = s : iterateStacks ss pal rou  
 
 loadT :: Truck -> Palet -> Truck      -- carga un palet en el camion
-loadT (Tru stackL rou) pal | not (inRouteR rou (destinationP pal)) = error "City not in route"  -- Verifica si la ciudad destino del palet está en la ruta
+loadT (Tru stackL rou) pal | not (inRouteR rou (destinationP pal)) = error "City not in route" 
                            | newStacks == stackL = error "Sin espacio suficiente"
                            | otherwise = Tru (newStacks) rou
                         where 

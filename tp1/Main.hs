@@ -16,6 +16,34 @@ testF action = unsafePerformIO $ do
         isException :: SomeException -> Maybe ()
         isException _ = Just ()
 
+
+
+-- Definiciones para testear
+paletB = newP "CiudadB" 3
+paletA = newP "CiudadA" 4
+paletC = newP "CiudadC" 2
+paletPesado = newP "CiudadC" 50  -- Excede el peso permitido del truck
+paletOutRoute = newP "CiudadE" 3  -- Ciudad destino fuera de la ruta
+
+route = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD"]
+routeRep = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD", "CiudadB"]
+
+truck1 = newT 2 10 route  -- Truck con 2 Stacks de altura 10 cada uno
+truckFull = newT 2 1 route  
+truck2 = newT 1 5 route  
+truck3 = newT 2 2 route
+
+truckFull2 = loadT truckFull paletB
+truckFull3 = loadT truckFull2 paletA
+
+truck4 = loadT truck3 paletA
+truckNotHoldsC = loadT truck4 paletB
+
+truckTap0 = newT 1 2 route -- este truck va a quedar con palets tapados por otros cuando los querramos descargar
+truckTap1 = loadT truckTap0 paletB
+truckTapado = loadT truckTap1 paletA
+
+
 -- Tests
 runTests :: [Bool]
 runTests = 
@@ -71,34 +99,7 @@ runTests =
 
     , inOrderR routeRep "CiudadB" "CiudadD" == True   -- Asumimos que cada ciudad está en la posición que se cargó primero
     
-
-    -- Test: Celdas libres después de desapilar
     ]
-
--- Definiciones para testear
-paletB = newP "CiudadB" 3
-paletA = newP "CiudadA" 4
-paletC = newP "CiudadC" 2
-paletPesado = newP "CiudadC" 50  -- Excede el peso permitido del truck
-paletOutRoute = newP "CiudadE" 3  -- Ciudad destino fuera de la ruta
-
-route = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD"]
-routeRep = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD", "CiudadB"]
-
-truck1 = newT 2 10 route  -- Truck con 2 Stacks de altura 10 cada uno
-truckFull = newT 2 1 route  
-truck2 = newT 1 5 route  
-truck3 = newT 2 2 route
-
-truckFull2 = loadT truckFull paletB
-truckFull3 = loadT truckFull2 paletA
-
-truck4 = loadT truck3 paletA
-truckNotHoldsC = loadT truck4 paletB
-
-truckTap0 = newT 1 2 route -- este truck va a quedar con palets tapados por otros cuando los querramos descargar
-truckTap1 = loadT truckTap0 paletB
-truckTapado = loadT truckTap1 paletA
 
 
 main :: IO ()
