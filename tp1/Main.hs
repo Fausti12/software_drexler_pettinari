@@ -39,9 +39,9 @@ truckFull3 = loadT truckFull2 paletA
 truck4 = loadT truck3 paletA
 truckNotHoldsC = loadT truck4 paletB
 
-truckTap0 = newT 1 2 route -- este truck va a quedar con palets tapados por otros cuando los querramos descargar
-truckTap1 = loadT truckTap0 paletB
-truckTapado = loadT truckTap1 paletA
+truckBl0 = newT 1 2 route -- Este Truck va a quedar con palets tapados por otros cuando los querramos descargar
+truckBl1 = loadT truckBl0 paletB
+truckBlocked = loadT truckBl1 paletA
 
 
 -- Tests
@@ -91,12 +91,12 @@ runTests =
     , testF (loadT truck2 paletOutRoute)
 
       -- 15. Saltearse la descarga en una ciudad, y descargar los de otra que los tiene tapados (descargar en B antes que en A)
-    , netT (unloadT truckTapado "CiudadB") == netT (truckTapado)  -- si está tapado, no se puede descargar (por lo tanto el camión sigue igual)
+    , netT (unloadT truckBlocked "CiudadB") == netT (truckBlocked)  
 
-      -- 16. Descargo igual que antes ("salteándome una ciudad"), pero sin estar tapado el palet de la ciudadB
+      -- 16. Descargo igual que antes (salteándose una ciudad), pero sin estar tapado el palet de la ciudadB
     , netT (unloadT truckFull3 "CiudadB") /= netT (truckFull3)  -- si no está tapado, se puede descargar (por lo tanto el camión queda con un palet menos)
 
-      -- 17. Descargar un palet en una ciudad que no está en la ruta
+      -- 17. Descargar palets en una ciudad que no está en la ruta
     , netT (unloadT truckFull3 "CiudadE") == netT (truckFull3)  -- si la ciudad no está en la ruta el camión sigue igual
     ]
 
