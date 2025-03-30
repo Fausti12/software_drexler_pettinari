@@ -106,7 +106,7 @@ public class RingTest {
 
     @Test void test13RemoveLast() {
         assertEquals( LocalDate.now(), new Ring().add( "Hola" )
-                                                 .add( new Integer( 42 ) )
+                                                 .add( 42 )
                                                  .add( LocalDate.now() )
                                                  .next()
                                                  .next()

@@ -44,7 +44,7 @@ public class Ring {
         }
         if (nextRing == this) { // Solo hay un nodo en el anillo
             this.cargo = null;
-            this.nextRing = this;
+            this.nextRing = null;
             return this;
         }
 
