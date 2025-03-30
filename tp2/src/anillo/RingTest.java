@@ -97,7 +97,7 @@ public class RingTest {
                                      .next()
                                      .remove()
                                      .current() );
-        assertEquals( "Hola", new Ring().add( "Hola" )
+        assertEquals( "Hola", new Ring().add( "Hola" ) //anda si add inserta "antes" del actual
                                         .add( new Integer( 42 ) )
                                         .add( LocalDate.now() )
                                         .next()

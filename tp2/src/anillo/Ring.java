@@ -25,17 +25,25 @@ public class Ring {
 
     public Ring add( Object cargo ) {
         Ring newRing = new Ring();
-        newRing.cargo = cargo;
+        //newRing.cargo = cargo;
 
         if (this.nextRing == null) { // Si el anillo está vacío
             newRing.nextRing = newRing; // Se apunta a sí mismo
-        }
-        else {
-            newRing.nextRing = this.nextRing; // Inserta en la lista
+            newRing.cargo = cargo;
+            return newRing;
         }
 
-        this.nextRing = newRing; //ver pq es así
-        return newRing;
+        //this.nextRing = newRing; //ver pq es así
+        //return newRing;
+
+        //de esta forma se inserta antes del actual
+        newRing.cargo = this.cargo; // Copia el contenido actual en el nuevo nodo
+        newRing.nextRing = this.nextRing; // Conecta al siguiente nodo
+
+        this.cargo = cargo;
+        this.nextRing = newRing;
+
+        return this;
     }
 
     public Ring remove() {
@@ -48,8 +56,12 @@ public class Ring {
             return this;
         }
 
-        Ring newRing = nextRing;
-        nextRing = nextRing.nextRing;
-        return newRing;
+        // Ring newRing = nextRing;
+        //nextRing = nextRing.nextRing;
+        //return newRing;
+        this.cargo = this.nextRing.cargo;
+        this.nextRing = this.nextRing.nextRing;
+        //de esta forma el puntero sigue en el mismo nodo pero con el contenido actualizado.
+        return this;
     }
 }
