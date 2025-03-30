@@ -30,20 +30,20 @@ public class RingTest {
 
     @Test void test04CurrentAfterTwoAdds() {
         assertEquals( 42, new Ring().add( "Hola" )
-                .add( 42 )
+                .add( new Integer( 42 ) )
                 .current() );
     }
 
     @Test void test05CurrentAndNextAfterTwoAdds() {
         assertEquals( "Hola", new Ring().add( "Hola" )
-                                        .add( 42  )  //saqué lo de new Integer
+                                        .add( new Integer( 42 ) )
                                         .next()
                                         .current() );
     }
 
     @Test void test06CyclesWithTwoAdds() {
         assertEquals( 42, new Ring().add( "Hola" )
-                                    .add( 42 )
+                                    .add( new Integer( 42 ) )
                                     .next()
                                     .next()
                                     .current() );
@@ -51,7 +51,7 @@ public class RingTest {
 
     @Test void test07InsertsAfterTwoAdds() {
         assertEquals( LocalDate.now(), new Ring().add( "Hola" )
-                                                 .add( 42 )
+                                                 .add( new Integer( 42 ) )
                                                  .next()
                                                  .add( LocalDate.now() )
                                                  .current() );
@@ -59,7 +59,7 @@ public class RingTest {
 
     @Test void test08NextOnInsertsAfterTwoAdds() {
         assertEquals( "Hola", new Ring().add( "Hola" )
-                                        .add( 42 )
+                                        .add( new Integer( 42 ) )
                                         .next()  //lleva a "Hola"
                                         .add( LocalDate.now() )
                                         .next()
