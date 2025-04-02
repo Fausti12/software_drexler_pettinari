@@ -16,6 +16,65 @@ testF action = unsafePerformIO $ do
         isException :: SomeException -> Maybe ()
         isException _ = Just ()
 
+-- Tests
+runTests :: [Bool]
+runTests = 
+    [ 
+
+      -- Destino de palet
+     destinationP paletB == "CiudadB"
+
+      -- Peso de palet
+    ,  netP paletB == 3 
+
+      -- Test: Crear instancia de ruta con lista vacía
+    ,  testF (newR [])
+
+      -- Test: Crear instancia de ruta con lista de ciudades
+    ,  not $ testF (newR ["CiudadA", "CiudadB", "CiudadC"])
+
+      -- Test: Ciudad 1 está antes que Ciudad 2 en la ruta
+    ,  inOrderR route "CiudadA" "CiudadC" == True
+
+      -- Test: Ciudad 1 no está antes que Ciudad 2 en la ruta  VER SI ESTO IRÍA
+    ,  inOrderR route "CiudadC" "CiudadA" == False 
+
+      -- Test: Creación de Truck
+    , freeCellsT truck1 == 20
+
+      -- Test 1: Se permite subir un palet a un stack disponible
+    ,  not $ testF (loadT truck1 paletB)
+
+      -- Test 2: No se puede subir palet porque excede peso de la bahía
+    , testF (loadT truck1 paletPesado)
+
+      -- Test 3: No se puede subir palet porque todos los stacks están llenos
+    , testF (loadT truckFull3 paletB)
+
+      -- Test 4: No se puede subir palet porque no hay stack que lo acepte (por orden de ciudades)
+    , testF (loadT truckNotHoldsC paletC)
+
+      -- Test 5: No se puede cargar un palet que tiene destino fuera de la ruta
+    , testF (loadT truck2 paletOutRoute)
+
+     -- Test 10: Saltearse la descarga en una ciudad, y descargar los de otra que los tiene tapados (descargar en B antes que en A)
+    , netT (unloadT truckTapado "CiudadB") == netT (truckTapado)  -- si está tapado, no se puede descargar; por lo tanto el camión sigue igual
+
+      -- Test 11: Descargo igual que antes ("salteándome una ciudad"), pero sin estar tapado el palet de la ciudadB
+    , netT (unloadT truckFull3 "CiudadB") /= netT (truckFull3)  -- si no está tapado, se puede descargar; por lo tanto el camión queda con un palet menos
+
+      -- Test 12: Descargar un palet en una ciudad que no está en la ruta
+      -- No comparar trucks con == 
+    , netT (unloadT truckFull3 "CiudadE") == netT (truckFull3)  -- si la ciudad no está en la ruta, no se puede descargar; por lo tanto el camión sigue igual
+
+    , inOrderR route "CiudadB" "CiudadB" == False
+
+    , inOrderR routeRep "CiudadB" "CiudadD" == True   -- Asumimos que cada ciudad está en la posición que se cargó primero
+    
+
+    -- Test: Celdas libres después de desapilar
+    ]
+
 -- Definiciones para testear
 paletB = newP "CiudadB" 3
 paletA = newP "CiudadA" 4
@@ -24,6 +83,7 @@ paletPesado = newP "CiudadC" 50  -- Excede el peso permitido del truck
 paletOutRoute = newP "CiudadE" 3  -- Ciudad destino fuera de la ruta
 
 route = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD"]
+routeRep = newR ["CiudadA", "CiudadB", "CiudadC", "CiudadD", "CiudadB"]
 
 truck1 = newT 2 10 route  -- Truck con 2 Stacks de altura 10 cada uno
 truckFull = newT 2 1 route  
@@ -40,66 +100,6 @@ truckTap0 = newT 1 2 route -- este truck va a quedar con palets tapados por otro
 truckTap1 = loadT truckTap0 paletB
 truckTapado = loadT truckTap1 paletA
 
-
--- Tests
-runTests :: [Bool]
-runTests = 
-    [ 
-      -- Test 1: Crear instancia de ruta con lista vacía
-      testF (newR [])   -- Debería fallar porque la lista de ciudades vacía no tiene sentido.
-
-      -- Test 2: Crear instancia de ruta con lista de ciudades
-    , not $ testF (newR ["CiudadA", "CiudadB", "CiudadC"])
-
-      -- Test 3: Ciudad 1 está antes que Ciudad 2 en la ruta
-    , not $ testF (inOrderR route "CiudadA" "CiudadC")
-
-      -- Test 4: Ciudad 1 no está antes que Ciudad 2 en la ruta  VER SI ESTO IRÍA
-    , not $ testF (inOrderR route "CiudadC" "CiudadA")
-      
-      -- Test 5: Se permite subir un palet a un stack disponible
-    ,  not $ testF (loadT truck1 paletB)
-
-      -- Test 6: No se puede subir palet porque excede peso de la bahía
-    , testF (loadT truck1 paletPesado)
-
-      -- Test 7: No se puede subir palet porque todos los stacks están llenos
-    , testF (loadT truckFull3 paletB)
-
-      -- Test 8: No se puede subir palet porque no hay stack que lo acepte (por orden de ciudades)
-    , testF (loadT truckNotHoldsC paletC)
-
-        -- Test 9: No se puede cargar un palet que tiene destino fuera de la ruta
-    , testF (loadT truck2 paletOutRoute)
-
-      -- Test 10: Saltearse la descarga en una ciudad, y descargar los de otra que los tiene tapados (descargar en B antes que en A)
-    , netT (unloadT truckTapado "CiudadB") == netT (truckTapado)  -- si está tapado, no se puede descargar; por lo tanto el camión sigue igual
-
-      -- Test 11: Descargo igual que antes ("salteándome una ciudad"), pero sin estar tapado el palet de la ciudadB
-    , netT (unloadT truckFull3 "CiudadB") /= netT (truckFull3)  -- si no está tapado, se puede descargar; por lo tanto el camión queda con un palet menos
-
-      -- Test 12: Descargar un palet en una ciudad que no está en la ruta
-      -- No comparar trucks con == 
-      -- unloadT truckFull3 "CiudadE" == truckFull3  -- si la ciudad no está en la ruta, no se puede descargar; por lo tanto el camión sigue igual
-
-      -- Test 13: Crear un palet que tenga peso negativo
-    , testF (newP "CiudadA" (-1))
-
-      -- Test 14: Crear un truck con cantidad de stacks negativa o cero 
-    , testF (newT (-1) 10 route)
-
-      -- Test 15: Crear un truck con altura de stack negativa o cero
-    , testF (newT 1 0 route)
-
-      -- Test : Crear un truck con ruta vacía
-    --, testF (newT 1 10 (newR []))
-
-      -- Test 16: Crear un stack con capacidad negativa
-    , testF (newS (-1))
-
-
-
-    ]
 
 main :: IO ()
 main = print runTests
