@@ -1,67 +1,81 @@
 package anillo;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+class Nodo { //cambiar nombre a clase
+    Object cargo;
+    Nodo next;
+
+    Nodo(Object cargo) {
+        this.cargo = cargo;
+        this.next = this; // Se apunta a sí mismo al principio
+    }
+
+    Nodo add(Object newCargo) {
+        Nodo newNode = new Nodo(this.cargo);
+        newNode.next = this.next;
+        this.cargo = newCargo;  //nuevo nodo se agrega antes del actual
+        this.next = newNode;
+        return this;
+    }
+
+    Nodo next() { return this.next; }
+
+    Nodo remove() {
+        return (this.next == this) ? new NodoVacio() : this.next; // ✅ Si hay un solo nodo, vuelve a NodoVacio
+    }
+
+    Object current() { return cargo; }
+}
+
+class NodoVacio extends Nodo {
+    NodoVacio() {
+        super(null); // se pasa cargo=null a constructor Nodo
+        this.next = this; // Se apunta a sí mismo
+    }
+
+    @Override //redefinir un metodo de la clase padre en una subclase
+    Nodo add(Object cargo) {
+        return new Nodo(cargo); // Si es vacío, se convierte en un nodo real
+    }
+
+    @Override
+    Nodo next() {
+        throw new RuntimeException("Empty ring");
+    }
+
+    @Override
+    Nodo remove() {
+        throw new RuntimeException("Empty ring");
+    }
+
+    @Override
+    Object current() {
+        throw new RuntimeException("No value in ring");
+    }
+}
 
 public class Ring {
-    private Object cargo;
-    private Ring nextRing;
+    private Nodo nodo;
 
     public Ring() {
-        nextRing = null;
-        cargo = null;
+        nodo = new NodoVacio(); // Siempre empieza con un nodo vacío
+    }
+
+    public Ring add(Object cargo) {
+        nodo = nodo.add(cargo);
+        return this;
     }
 
     public Ring next() {
-        if ( nextRing == null ) { throw new RuntimeException( "Empty ring" );}
-        return nextRing; // Siempre retorna el siguiente nodo, aunque sea el mismo
-    }
-
-    public Object current() {
-        if ( cargo == null ) { throw new RuntimeException( "No value in ring" );}
-        return cargo;}
-
-    public Ring add( Object cargo ) {
-        Ring newRing = new Ring();
-        //newRing.cargo = cargo;
-
-        if (this.nextRing == null) { // Si el anillo está vacío
-            newRing.nextRing = newRing; // Se apunta a sí mismo
-            newRing.cargo = cargo;
-            return newRing;
-        }
-
-        //this.nextRing = newRing; //ver pq es así
-        //return newRing;
-
-        //de esta forma se inserta antes del actual
-        newRing.cargo = this.cargo; // Copia el contenido actual en el nuevo nodo
-        newRing.nextRing = this.nextRing; // Conecta al siguiente nodo
-
-        this.cargo = cargo;
-        this.nextRing = newRing;
-
+        //nodo = nodo.next;
+        nodo = nodo.next();
         return this;
     }
 
-    public Ring remove() {
-        if ( nextRing == null ) {
-            throw new RuntimeException( "Empty ring" );
-        }
-        if (nextRing == this) { // Solo hay un nodo en el anillo
-            this.cargo = null;
-            this.nextRing = null;
-            return this;
-        }
+    public Object current() { return nodo.current(); }
 
-        // Ring newRing = nextRing;
-        //nextRing = nextRing.nextRing;
-        //return newRing;
-        this.cargo = this.nextRing.cargo;
-        this.nextRing = this.nextRing.nextRing;
-        //de esta forma el puntero sigue en el mismo nodo pero con el contenido actualizado.
+    public Ring remove() {
+        nodo = nodo.remove();
         return this;
     }
 }
+

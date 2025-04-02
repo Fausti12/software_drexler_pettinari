@@ -22,12 +22,6 @@ public class RingTest {
         assertEquals( "Hola" , new Ring().add( "Hola" ).next().current() );
     }
 
-    //@Test void test04CurrentAfterTwoAdds() {
-      //  assertEquals( 42, new Ring().add( "Hola" )
-       //                             .add( new Integer( 42 ) )
-       //                             .current() );
-    //}
-
     @Test void test04CurrentAfterTwoAdds() {
         assertEquals( 42, new Ring().add( "Hola" )
                 .add( new Integer( 42 ) )
@@ -60,7 +54,7 @@ public class RingTest {
     @Test void test08NextOnInsertsAfterTwoAdds() {
         assertEquals( "Hola", new Ring().add( "Hola" )
                                         .add( new Integer( 42 ) )
-                                        .next()  //lleva a "Hola"
+                                        .next()
                                         .add( LocalDate.now() )
                                         .next()
                                         .current() );
