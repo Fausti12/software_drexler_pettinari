@@ -20,8 +20,15 @@ class Nodo { //cambiar nombre a clase
     Nodo next() { return this.next; }
 
     Nodo remove() {
-        return (this.next == this) ? new NodoVacio() : this.next; // ✅ Si hay un solo nodo, vuelve a NodoVacio
+        if (this.next == this) { // Si solo hay un nodo
+            return new NodoVacio();
+        }
+
+        this.cargo = this.next.cargo;   // Copia el contenido del siguiente nodo
+        this.next = this.next.next;     // Saltea el nodo siguiente
+        return this;
     }
+
 
     Object current() { return cargo; }
 }
