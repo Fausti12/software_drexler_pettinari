@@ -1,27 +1,35 @@
 package anillo;
 
-class Nodo { //cambiar nombre a clase
-    Object cargo;
-    Nodo next;
+abstract class RingNode {
+    public Object cargo;
+    public RingNode next;
 
-    Nodo(Object cargo) {
+    public abstract RingNode add(Object newCargo);
+    public abstract RingNode next();
+    public abstract RingNode remove();
+    public abstract Object current();
+}
+
+class DataNode extends RingNode { // Nodo con datos
+
+    public DataNode(Object cargo) {
         this.cargo = cargo;
         this.next = this; // Se apunta a sí mismo al principio
     }
 
-    Nodo add(Object newCargo) {
-        Nodo newNode = new Nodo(this.cargo);
+    public RingNode add(Object newCargo) {
+        RingNode newNode = new DataNode(this.cargo);
         newNode.next = this.next;
-        this.cargo = newCargo;  //nuevo nodo se agrega antes del actual
+        this.cargo = newCargo;  // Nuevo nodo se agrega antes del actual
         this.next = newNode;
         return this;
     }
 
-    Nodo next() { return this.next; }
+    public RingNode next() { return this.next; }
 
-    Nodo remove() {
+    public RingNode remove() {
         if (this.next == this) { // Si solo hay un nodo
-            return new NodoVacio();
+            return new EmptyNode();
         }
 
         this.cargo = this.next.cargo;   // Copia el contenido del siguiente nodo
@@ -29,60 +37,55 @@ class Nodo { //cambiar nombre a clase
         return this;
     }
 
-
-    Object current() { return cargo; }
+    public Object current() { return cargo; }
 }
 
-class NodoVacio extends Nodo {
-    NodoVacio() {
-        super(null); // se pasa cargo=null a constructor Nodo
+class EmptyNode extends RingNode { // Nodo vacío
+    EmptyNode() {
+        this.cargo = null;
         this.next = this; // Se apunta a sí mismo
     }
 
-    @Override //redefinir un metodo de la clase padre en una subclase
-    Nodo add(Object cargo) {
-        return new Nodo(cargo); // Si es vacío, se convierte en un nodo real
+    public RingNode add(Object cargo) {
+        return new DataNode(cargo); // Si es vacío, se convierte en un nodo real
     }
 
-    @Override
-    Nodo next() {
+    public RingNode next() {
         throw new RuntimeException("Empty ring");
     }
 
-    @Override
-    Nodo remove() {
+    public RingNode remove() {
         throw new RuntimeException("Empty ring");
     }
 
-    @Override
-    Object current() {
+    public Object current() {
         throw new RuntimeException("No value in ring");
     }
 }
 
 public class Ring {
-    private Nodo nodo;
+    private RingNode node;
 
     public Ring() {
-        nodo = new NodoVacio(); // Siempre empieza con un nodo vacío
+        node = new EmptyNode(); // Siempre empieza con un nodo vacío
     }
 
     public Ring add(Object cargo) {
-        nodo = nodo.add(cargo);
+        node = node.add(cargo);
         return this;
     }
 
     public Ring next() {
-        //nodo = nodo.next;
-        nodo = nodo.next();
+        node = node.next();
         return this;
     }
 
-    public Object current() { return nodo.current(); }
+    public Object current() { return node.current(); }
 
     public Ring remove() {
-        nodo = nodo.remove();
+        node = node.remove();
         return this;
     }
 }
+
 
