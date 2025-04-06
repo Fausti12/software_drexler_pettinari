@@ -37,7 +37,7 @@ class DataNode extends RingNode { // Nodo con datos
         } catch (RuntimeException e) {
             return new EmptyNode();
         }
-        this.next().next = temp;
+        this.next = temp;
         return this;
     }
 
