@@ -27,18 +27,29 @@ class DataNode extends RingNode {
         this.prev.next = newNode;
         newNode.prev = this.prev;
         this.prev = newNode;
+        System.out.println("this node" + cargo + " has been added");
+        System.out.println("next node" + newNode.next.cargo );
+        System.out.println("prev node" + newNode.prev.cargo );
+
         return newNode;
     }
 
     public RingNode next() {
-            return this.next;
+        System.out.println("Nodo a retornar " + next.cargo );
+        System.out.println("Next del que se retorna node = " + next.next.cargo );
+        System.out.println("prev del que se retorna node = " + next.prev.cargo );
+
+        return this.next;
     }
 
     public RingNode remove() {
         //copia info del siguiente nodo en actual
         this.cargo = this.next.cargo;
+        //this.next = this.next.next;
+        //this.prev = this.prev.prev;
+        this.next.next.prev = this;
         this.next = this.next.next;
-        this.prev = this.prev.prev;
+
         return this;
     }
 
