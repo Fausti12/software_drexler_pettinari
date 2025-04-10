@@ -3,88 +3,69 @@ package anillo;
 import java.util.Stack;
 
 abstract class RingNode {
-    public abstract Ring add(Stack<RingNode> stack, Object cargo);
-    public abstract Ring next(Stack<RingNode> stack);
-    public abstract Ring remove(Stack<RingNode> stack);
-    public abstract Object current();
-    public abstract Ring onEmpty(Stack<RingNode> stack); // hook
+    public Object cargo;
+    public RingNode next; //necesario para llamar métodos en ringnode
+    public RingNode prev;
+    public abstract RingNode add(Object cargo);
+    public abstract RingNode next();
+    public abstract RingNode remove();
+    public abstract Object current();// hook
 }
 
 // Nodo con datos
 class DataNode extends RingNode {
-    private final Object cargo;
 
     DataNode(Object cargo) {
         this.cargo = cargo;
+        this.next = this;
+        this.prev = this;
     }
 
-    public Ring add(Stack<RingNode> stack, Object newCargo) {
-        stack.push(new DataNode(newCargo));
-        return new Ring(stack);
+    public RingNode add(Object cargo) {
+        RingNode newNode = new DataNode(cargo);           // Nuevo nodo con el valor
+        newNode.next = this;
+        this.prev.next = newNode;
+        newNode.prev = this.prev;
+        this.prev = newNode;
+        return newNode;
     }
 
-    public Ring next(Stack<RingNode> stack) {
-        Stack<RingNode> aux = new Stack<>();
-
-        RingNode empty = stack.removeFirst();     // Sacamos el EmptyNode fijo
-
-        RingNode current = stack.pop();       // Top actual
-        // Invertimos el resto en aux
-        transfer(stack, aux);
-
-        // Insertamos el actual al fondo
-        stack.push(current);
-        transfer(aux, stack);
-
-        // Reponemos el EmptyNode
-        stack.insertElementAt(empty, 0);
-
-        return new Ring(stack);
+    public RingNode next() {
+            return this.next;
     }
 
-
-    private Ring moveTopToBottom(Stack<RingNode> original, Stack<RingNode> aux) {
-        RingNode top = original.pop(); // guardamos el actual
-        transfer(original, aux);      // movemos todoa aux
-        original.push(top);           // ponemos el primero abajo
-        transfer(aux, original);      // volvemos
-        return new Ring(original);
-    }
-
-    private void transfer(Stack<RingNode> from, Stack<RingNode> to) {
-        while (!from.empty()) {
-            to.push(from.pop());
-        }
-    }
-
-    public Ring remove(Stack<RingNode> stack) {
-        stack.pop();                   // quitamos el actual
-        return stack.peek().onEmpty(stack); // delegamos decisión al siguiente nodo
+    public RingNode remove() {
+        //copia info del siguiente nodo en actual
+        this.cargo = this.next.cargo;
+        this.next = this.next.next;
+        this.prev = this.prev.prev;
+        return this;
     }
 
     public Object current() {
         return cargo;
     }
 
-    public Ring onEmpty(Stack<RingNode> stack) {
-        return new Ring(stack); // no hacer nada si no está vacío
-    }
 }
 
 // Nodo vacío
 class EmptyNode extends RingNode {
-    public Ring add(Stack<RingNode> stack, Object cargo) {
-       // stack.pop(); // quitamos el nodo vacío
-        //stack.push(new DataNode(cargo));
-        stack.push(new DataNode(cargo));  // lo agregás arriba del EmptyNode
-        return new Ring(stack);
+
+    EmptyNode(){
+        cargo = null;
+        next = null;
+        prev = null;}
+
+    public RingNode add(Object cargo) {
+        return new DataNode(cargo);
+
     }
 
-    public Ring next(Stack<RingNode> stack) {
+    public RingNode next() {
         throw new RuntimeException("next() no permitido en anillo vacío");
     }
 
-    public Ring remove(Stack<RingNode> stack) {
+    public RingNode remove() {
         throw new RuntimeException("remove() no permitido en anillo vacío");
     }
 
@@ -92,10 +73,6 @@ class EmptyNode extends RingNode {
         throw new RuntimeException("current() no permitido en anillo vacío");
     }
 
-    public Ring onEmpty(Stack<RingNode> stack) {
-        stack.push(this); // volvemos a poner el nodo vacío
-        return new Ring(stack);
-    }
 }
 
 // Clase principal
@@ -107,29 +84,31 @@ public class Ring {
         this.stack.push(new EmptyNode());
     }
 
-    public Ring(Stack<RingNode> stack) {
-        this.stack = stack;
-    }
 
     public Ring add(Object cargo) {
-        return top().add(stack, cargo);
+        RingNode newNode = stack.peek().add(cargo);
+        stack.push(newNode);
+        return this;
     }
 
     public Ring next() {
-        return top().next(stack); //se agarra el de arriba luego de cambiar orden en stack
+        RingNode currentNode = stack.peek().next();
+        stack.push(currentNode);
+        stack.remove(1); //paso nodo en posicion 2 a arriba del stack, donde siempre esta el actual
+        return this;
+
     }
 
     public Ring remove() {
-        return top().remove(stack);
+        RingNode actNode = stack.peek().remove();
+        stack.remove(1);
+        return this;
     }
 
     public Object current() {
-        return top().current();
+        return stack.peek().current(); // Puede lanzar excepcion si top es EmptyNode
     }
 
-    private RingNode top() {
-        return stack.peek();
-    }
 }
 
 

@@ -107,4 +107,19 @@ public class RingTest {
                                                  .remove()
                                                  .current() );
     }
+
+    @Test void test14RemoveLast() {
+        assertEquals( 42,
+                new Ring().add( "Hola" )
+                        .add( 42 )
+                        .add( LocalDate.now() )
+                        .next()
+                        .next()
+                        .remove()
+                        .next()
+                        //.remove()
+                        .current() );
+    }
 }
+
+
