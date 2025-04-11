@@ -47,10 +47,9 @@ class EmptyNode extends Link {
     EmptyNode(){
         cargo = null;}
 
-    public LinkData add(Stack<Link> stack, Object cargo) {
+    public Link add(Stack<Link> stack, Object cargo) {
         stack.push(new LinkData(cargo));
-        return new LinkData(cargo); //poner Null
-
+        return stack.peek();
     }
 
     public Link next(Stack<Link> stack) {
@@ -68,7 +67,7 @@ class EmptyNode extends Link {
 // Clase principal
 public class Ring {
     private Stack<Link> stack = new Stack<>();
-    private Link currentLink;
+    private Link currentLink; //tal vez no haga falta: métodos de Link devuelven Null y current sería el peek del stack
 
     public Ring() {
         stack.push(new EmptyNode());
