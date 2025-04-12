@@ -4,95 +4,82 @@ import java.util.Stack;
 
 abstract class Link {
     public Object cargo;
-    public abstract Link add(Stack<Link> stack, Object cargo);
-    public abstract Link next(Stack<Link> stack);
-    public abstract Link remove(Stack<Link> stack);
-    public abstract Object current(Stack<Link> stack);// hook
+    public abstract void add(Stack<Link> stack, Object cargo);
+    public abstract void next(Stack<Link> stack);
+    public abstract void remove(Stack<Link> stack);
+    public abstract Object current();// hook
 }
 
-// Nodo con datos
+// Eslabón con datos
 class LinkData extends Link {
 
-    LinkData(Object cargo) {
-        this.cargo = cargo;
-    }
+    LinkData(Object cargo) { this.cargo = cargo; }
 
-    public Link add(Stack<Link> stack, Object cargo) {
+    public void add(Stack<Link> stack, Object cargo) {
         Link newLink = new LinkData(cargo);
         stack.push(newLink);
-        return newLink; //esto no haría falta -> return Null
     }
 
-    public Link next(Stack<Link> stack) {
+    public void next(Stack<Link> stack) {
         Link current = stack.pop();
-        stack.insertElementAt(current, 1); // lo mandás al fondo
-        return stack.peek();
+        stack.insertElementAt(current, 1); // se lo agrega al fondo
     }
 
-    public Link remove(Stack<Link> stack) {
-        stack.pop();
-        Link nextLink = stack.peek();
-        return nextLink; //no haría falta
-    }
+    public void remove(Stack<Link> stack) { stack.pop();}
 
-    public Object current(Stack<Link> stack) {
-        return cargo;
-    }
+    public Object current() { return cargo; }
 
 }
 
-// Nodo vacío
-class EmptyNode extends Link {
+// Eslabón vacío
+class EmptyLink extends Link {
 
-    EmptyNode(){
-        cargo = null;}
+    EmptyLink(){ cargo = null; }
 
-    public Link add(Stack<Link> stack, Object cargo) {
+    public void add(Stack<Link> stack, Object cargo) {
         stack.push(new LinkData(cargo));
-        return stack.peek();
     }
 
-    public Link next(Stack<Link> stack) {
+    public void next(Stack<Link> stack) {
         throw new RuntimeException("next() no permitido en anillo vacío");
     }
 
-    public Link remove(Stack<Link> stack) {
+    public void remove(Stack<Link> stack) {
         throw new RuntimeException("remove() no permitido en anillo vacío");
     }
 
-    public Object current(Stack<Link> stack) {throw new RuntimeException("current() no permitido en anillo vacío");}
+    public Object current() {throw new RuntimeException("current() no permitido en anillo vacío");}
 
 }
 
-// Clase principal
 public class Ring {
     private Stack<Link> stack = new Stack<>();
-    private Link currentLink; //tal vez no haga falta: métodos de Link devuelven Null y current sería el peek del stack
+
+    private Link getPeekLink(){ return stack.peek(); }
 
     public Ring() {
-        stack.push(new EmptyNode());
-        currentLink = stack.getFirst();
+        stack.push(new EmptyLink());
     }
 
 
     public Ring add(Object cargo) {
-        currentLink = currentLink.add(stack, cargo);
+        getPeekLink().add(stack, cargo);
         return this;
     }
 
     public Ring next() {
-        currentLink = currentLink.next(stack);
+        getPeekLink().next(stack);
         return this;
 
     }
 
     public Ring remove() {
-        currentLink = currentLink.remove(stack);
+        getPeekLink().remove(stack);
         return this;
     }
 
     public Object current() {
-        return currentLink.current(stack);
+        return getPeekLink().current();
     }
 
 }
