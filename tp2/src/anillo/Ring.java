@@ -4,9 +4,8 @@ import java.util.Stack;
 
 public class Ring {
     Stack<Link> stack = new Stack<Link>();
-    public Ring(){
-        stack.push(new EmptyLink());
-    }
+
+    public Ring(){ stack.push(new EmptyLink()); }
 
     public Ring add(Object cargo) {
         Link newLink = getPeekLink().add(cargo);
@@ -15,8 +14,8 @@ public class Ring {
     }
 
     public Ring next() {
-        Link currentNode = getPeekLink().next();
-        stack.push(currentNode);
+        Link currentLink = getPeekLink().next();
+        stack.push(currentLink);
         stack.remove(1); //Se pasa el Link de abajo al tope del Stack
         return this;
     }
@@ -31,9 +30,7 @@ public class Ring {
         return getPeekLink().current();
     }
 
-    private Link getPeekLink(){
-        return stack.peek();
-    }
+    private Link getPeekLink(){ return stack.peek(); }
 
 
 }
