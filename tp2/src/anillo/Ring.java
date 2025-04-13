@@ -17,7 +17,7 @@ public class Ring {
     public Ring next() {
         Link currentNode = getPeekLink().next();
         stack.push(currentNode);
-        stack.remove(1); //paso nodo en posicion 2 a arriba del stack, donde siempre está el actual
+        stack.remove(1); //Se pasa el Link de abajo al tope del Stack
         return this;
     }
 
