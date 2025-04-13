@@ -9,8 +9,8 @@ abstract class Link {
 
 class DataLink extends Link {
     private Object cargo;
-    private DataLink next;
-    private  DataLink prev;
+    private Link next;
+    private  Link prev;
 
     DataLink(Object cargo) {
         this.cargo = cargo;
@@ -18,23 +18,23 @@ class DataLink extends Link {
         this.prev = this;
     }
 
-    public DataLink add(Object cargo) {
+    public Link add(Object cargo) {
         DataLink newNode = new DataLink(cargo);
         newNode.setNext(this);
-        newNode.setPrev(this.getPrev());
-        this.getPrev().setNext(newNode);
+        newNode.setPrev((DataLink) this.getPrev());
+        ((DataLink) this.getPrev()).setNext(newNode);
         this.setPrev(newNode);
         return newNode;
     }
 
-    public DataLink next() {
+    public Link next() {
         return next;
     }
 
-    public DataLink remove(){
+    public Link remove(){
         this.cargo = this.next.current();
-        this.next = this.next.getNext();
-        this.prev = this.prev.getPrev();
+        this.next = ((DataLink) this.next).getNext();
+        this.prev = ((DataLink) this.prev).getPrev();
         return this;
     }
 
@@ -42,11 +42,11 @@ class DataLink extends Link {
         return cargo;
     }
 
-    public DataLink getNext() {
+    public Link getNext() {
         return next;
     }
 
-    public DataLink getPrev() {
+    public Link getPrev() {
         return prev;
     }
 
