@@ -22,7 +22,7 @@ public class Ring {
     }
 
     public Ring remove() {
-        Link actNode = getPeekLink().remove();
+        getPeekLink().remove();
         stack.remove(1);
         return this;
     }
