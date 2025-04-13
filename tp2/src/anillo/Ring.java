@@ -3,44 +3,40 @@ package anillo;
 import java.util.Stack;
 
 abstract class Link {
-    public Object cargo;
-    public Link next; //necesario para llamar métodos en ringnode
-    public Link prev;
-
     public abstract Link add(Object cargo);
-
     public abstract Link next();
-
     public abstract Link remove();
-
     public abstract Object current();
-
 }
 
 class DataLink extends Link {
+    private Object cargo;
+    private DataLink next;
+    private  DataLink prev;
+
     DataLink(Object cargo) {
         this.cargo = cargo;
         this.next = this;
         this.prev = this;
     }
 
-    public Link add(Object cargo) {
-        Link newNode = new DataLink(cargo);           // Nuevo nodo con el valor
-        newNode.next = this;
-        this.prev.next = newNode;
-        newNode.prev = this.prev;
-        this.prev = newNode;
+    public DataLink add(Object cargo) {
+        DataLink newNode = new DataLink(cargo);
+        newNode.setNext(this);
+        newNode.setPrev(this.getPrev());
+        this.getPrev().setNext(newNode);
+        this.setPrev(newNode);
         return newNode;
     }
 
-    public Link next() {
+    public DataLink next() {
         return next;
     }
 
-    public Link remove(){
-        this.cargo = this.next.cargo;
-        this.next = this.next.next;
-        this.prev = this.prev.prev;
+    public DataLink remove(){
+        this.cargo = this.next.current();
+        this.next = this.next.getNext();
+        this.prev = this.prev.getPrev();
         return this;
     }
 
@@ -48,15 +44,26 @@ class DataLink extends Link {
         return cargo;
     }
 
+    public DataLink getNext() {
+        return next;
+    }
+
+    public DataLink getPrev() {
+        return prev;
+    }
+
+    public void setNext(DataLink next) {
+        this.next = next;
+    }
+
+    public void setPrev(DataLink prev) {
+        this.prev = prev;
+    }
+
 }
 
 
 class EmptyLink extends Link {
-    EmptyLink(){
-        cargo = null;
-        next = null;
-        prev = null;
-    }
 
     public Link add(Object cargo) {
         return new DataLink(cargo);
