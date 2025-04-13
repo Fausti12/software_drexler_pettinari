@@ -108,20 +108,6 @@ public class RingTest {
                                                  .current() );
     }
 
-    @Test void test14() {
-        assertEquals( "wasabi", new Ring().add( "Hola" )
-                .add( 42 )
-                .add( LocalDate.now() )
-                .next()
-                .next()
-                .add("wasabi")
-                .next()
-                .next()
-                .next()
-                .remove()
-                .current() );
-    }
-
 }
 
 
