@@ -5,10 +5,12 @@ import java.util.*;
 
 public class Juego {
     private final Map<String, Jugador> jugadores = new LinkedHashMap<>();
-    private final Deque<Carta> pozo = new ArrayDeque<>();
+    private final Deque<Carta> pozo = new ArrayDeque<>();  //creo que con tener 1 carta funcionaría en todos los casos
     private final Iterator<String> turnos;
     private String actual;
     private final Deque<Carta> mazo;
+    private Carta cartaRecienRobada = null;  //para evitar que se juegue carta diferente a la agarrada en ese turno
+    private int direccion = 1; //para carta Reverse
 
     public Juego(List<Carta> cartasIniciales, String... nombres) {
         for (String nombre : nombres) jugadores.put(nombre, new Jugador(nombre));
@@ -17,7 +19,9 @@ public class Juego {
 
         repartir();
         turnos = ciclo(jugadores.keySet());
-        actual = turnos.next();
+        avanzarTurno();
+        // aplicar efecto de la primera carta del pozo si corresponde
+        //pozo.peek().aplicarEfecto().apply(this);
     }
 
     //para establecer una cantidad de cartas repartidas a cada jugador
@@ -29,10 +33,10 @@ public class Juego {
 
         repartir(cartasPorJugador);
         turnos = ciclo(jugadores.keySet());
-        actual = turnos.next();
+        avanzarTurno();
     }
 
-    private void repartir(int cartasPorJugador) {
+    private void repartir(int cartasPorJugador) {  //se reparte 1 carta a cada jugador (no las n cartas seguidas)
         for (int i = 0; i < cartasPorJugador; i++) {
             for (Jugador j : jugadores.values()) {
                 if (!mazo.isEmpty()) j.recibir(mazo.pop());
@@ -50,17 +54,22 @@ public class Juego {
 
     public void jugarCarta(Carta carta) {
         Jugador j = jugadores.get(actual);
-        if (!carta.puedeSerJugadoSobre(pozo.peek())) throw new IllegalArgumentException("Jugada inválida");
+
+        if (cartaRecienRobada != null && carta != cartaRecienRobada)
+            throw new IllegalArgumentException("Solo se puede jugar la carta recién robada");
+
+        if (!carta.puedeSerJugadoSobre(pozo.peek()))
+            throw new IllegalArgumentException("Jugada inválida");
+
         j.jugar(carta);
         pozo.push(carta);
-
-        // if (j.tieneUnaCarta() && !carta.fueCantadoUno()) j.robar(this, 2);
-
-        actual = turnos.next();
+        cartaRecienRobada = null; // se jugó la robada
+        avanzarTurno();
     }
 
     public void agarrarCartaMazo(){
-        jugadores.get(actual).recibir(robar());
+        cartaRecienRobada = robar();
+        jugadores.get(actual).recibir(cartaRecienRobada);
     }
 
     public void pasaTurno(){
@@ -69,6 +78,10 @@ public class Juego {
 
     private void validarTurno(String nombre) {
         if (!actual.equals(nombre)) throw new IllegalArgumentException("No es el turno de " + nombre);
+    }
+
+    private void avanzarTurno() {
+        actual = turnos.next();
     }
 /*
     public boolean cantoUno(String nombre) {
@@ -91,6 +104,14 @@ public class Juego {
     private Carta robar() {
         if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
         return mazo.pop();
+    }
+
+    private void robar(int cantidadCartas) { //usado para cuando aparece carta draw2
+        if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
+        for (int i = 0; i < cantidadCartas; i++){
+            Carta carta = mazo.pop();
+            jugadores.get(actual).recibir(carta);
+        }
     }
 
     public String nombreJugadorDelTurno(){

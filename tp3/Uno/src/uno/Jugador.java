@@ -19,6 +19,7 @@ public class Jugador {
     }
 
     public void jugar(Carta carta) {
+        //System.out.println(nombre);
         if (!mano.contains(carta)) throw new IllegalArgumentException("La carta no está en la mano");
         mano.remove(carta);
         //cantoUno = carta.fueCantadoUno();

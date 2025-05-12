@@ -1,7 +1,16 @@
 package uno;
 
+import java.util.function.Function;
+
 enum Color {
     ROJO, AZUL, VERDE, AMARILLO, NINGUNO;
+}
+
+interface AccionJuego {
+    void robar(int cantidad);
+    void saltar();
+    void cambiarDireccion();
+    String siguienteJugadorNombre();
 }
 
 abstract class Carta {
@@ -25,7 +34,7 @@ abstract class Carta {
         return this;
     }
 */
-    public abstract void aplicarEfecto(Juego juego);
+    public abstract Function<AccionJuego, Void> aplicarEfecto();
     public abstract boolean puedeSerJugadoSobre(Carta carta);
 }
 
@@ -41,8 +50,8 @@ class CartaNumero extends Carta {
         return numero;
     }
 
-    public void aplicarEfecto(Juego juego) {
-        // no tiene efecto especial
+    public Function<AccionJuego, Void> aplicarEfecto() {
+        return juego -> null;
     }
 
 
@@ -63,10 +72,12 @@ class CartaDraw2 extends Carta {
         super(color);
     }
 
-    public void aplicarEfecto(Juego juego) {
-        //juego.siguienteJugador().robar(juego, 2);
-        //juego.saltarJugador();
-        return ;
+    public Function<AccionJuego, Void> aplicarEfecto() {
+        return juego -> {
+            juego.robar(2);
+            juego.saltar();
+            return null;
+        };
     }
 
     public boolean puedeSerJugadoSobre(Carta carta) {
@@ -84,8 +95,8 @@ class CartaReverse extends Carta {
     }
 
 
-    public void aplicarEfecto(Juego juego) {
-       // juego.cambiarDireccion();
+    public Function<AccionJuego, Void> aplicarEfecto() {
+        return juego -> null;
     }
 
     public boolean puedeSerJugadoSobre(Carta carta) {
@@ -103,8 +114,9 @@ class CartaSkip extends Carta {
     }
 
 
-    public void aplicarEfecto(Juego juego) {
+    public Function<AccionJuego, Void> aplicarEfecto() {
         //juego.saltarJugador();
+        return juego -> null;
     }
 
     public boolean puedeSerJugadoSobre(Carta carta) {
@@ -123,8 +135,9 @@ class CartaWild extends Carta {
         super(Color.NINGUNO);
     }
 
-    public void aplicarEfecto(Juego juego) {
+    public Function<AccionJuego, Void> aplicarEfecto() {
        // elegido = juego.elegirColor();
+        return juego -> null;
     }
 
     public boolean puedeSerJugadoSobre(Carta carta) {
