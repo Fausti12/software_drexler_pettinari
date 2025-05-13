@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
 public class PartidaTest {
-    private Carta r2, r3, r4, r5, r6, a2, a7, tomaDos;
+    private Carta r2, r3, r4, r5, r6, r7, r8, a2, a7, tomaDos;
 
     @BeforeEach public void setUp(){
         r2 = new CartaNumero(Color.ROJO, 2); //se podria pasar Strings y que Juego cree clase Carta
@@ -15,6 +15,8 @@ public class PartidaTest {
         r4 = new CartaNumero(Color.ROJO, 4);
         r5 = new CartaNumero(Color.ROJO, 5);
         r6 = new CartaNumero(Color.ROJO, 6);
+        r7 = new CartaNumero(Color.ROJO, 7);
+        r8 = new CartaNumero(Color.ROJO, 8);
         a2 = new CartaNumero(Color.AZUL, 2);
         a7 = new CartaNumero(Color.AZUL, 7);
         tomaDos = new CartaDraw2(Color.AZUL);
@@ -111,9 +113,31 @@ public class PartidaTest {
     //ver cómo implementar aplicarEfecto
     @Test void testCartaInicialEnPozoEsTomaDosCartas() {
         Juego j = new Juego(List.of(tomaDos, r2, r3, r4, r5, r6), 1, "juan", "pedro");
+        assertEquals(Color.AZUL, j.colorPozo());
+        assertThrows(Throwable.class, () -> j.numPozo());
+    }
+
+    @Test void testJugadorAgarraCartasAlHaberTomaDosCartasEnPozoInicial() {
+        Juego j = new Juego(List.of(tomaDos, r2, r3, r4, r5, r6), 1, "juan", "pedro");
         assertEquals(3, j.cartasJugador("juan"));
         assertEquals(1, j.cartasJugador("pedro"));
     }
+
+
+    @Test void testJugadorAgarraCartasLuegoQueOtroTireTomaDosCartasValido() {
+        Juego j = new Juego(List.of(a7, tomaDos, r4, r5, r6, r7, r8), 1, "juan", "pedro");
+        //pozo: a7, juan: tiene draw2 azul, pedro: tiene r4
+        j.jugarCarta(tomaDos);
+        assertEquals(3, j.cartasJugador("pedro"));
+    }
+
+    @Test void testJugadorTiraTomaDosCartasNoValido() {
+        Juego j = new Juego(List.of(r2, tomaDos, r4, r5, r6, r7, r8), 1, "juan", "pedro");
+        assertThrows(Throwable.class, () -> j.jugarCarta(tomaDos));
+    }
+
+
+
 
 
 

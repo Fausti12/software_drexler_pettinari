@@ -21,7 +21,7 @@ public class Juego {
         turnos = ciclo(jugadores.keySet());
         avanzarTurno();
         // aplicar efecto de la primera carta del pozo si corresponde
-        //pozo.peek().aplicarEfecto().apply(this);
+        pozo.peek().aplicarEfecto().apply(this);
     }
 
     //para establecer una cantidad de cartas repartidas a cada jugador
@@ -34,6 +34,9 @@ public class Juego {
         repartir(cartasPorJugador);
         turnos = ciclo(jugadores.keySet());
         avanzarTurno();
+
+        // aplicar efecto de la primera carta del pozo si corresponde
+        pozo.peek().aplicarEfecto().apply(this);
     }
 
     private void repartir(int cartasPorJugador) {  //se reparte 1 carta a cada jugador (no las n cartas seguidas)
@@ -65,6 +68,8 @@ public class Juego {
         pozo.push(carta);
         cartaRecienRobada = null; // se jugó la robada
         avanzarTurno();
+        pozo.peek().aplicarEfecto().apply(this);
+
     }
 
     public void agarrarCartaMazo(){
@@ -80,9 +85,10 @@ public class Juego {
         if (!actual.equals(nombre)) throw new IllegalArgumentException("No es el turno de " + nombre);
     }
 
-    private void avanzarTurno() {
-        actual = turnos.next();
-    }
+    //private void avanzarTurno() {actual = turnos.next();}
+
+    //public así lo usa Carta en aplicarEfecto
+    public void avanzarTurno() {actual = turnos.next();}
 /*
     public boolean cantoUno(String nombre) {
         return jugadores.get(nombre).cantoUno();
@@ -106,7 +112,8 @@ public class Juego {
         return mazo.pop();
     }
 
-    private void robar(int cantidadCartas) { //usado para cuando aparece carta draw2
+    //public así metodo de Carta puede usarlo
+    public void robar(int cantidadCartas) { //usado para cuando aparece carta draw2
         if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
         for (int i = 0; i < cantidadCartas; i++){
             Carta carta = mazo.pop();

@@ -6,12 +6,14 @@ enum Color {
     ROJO, AZUL, VERDE, AMARILLO, NINGUNO;
 }
 
+/*
 interface AccionJuego {
     void robar(int cantidad);
     void saltar();
     void cambiarDireccion();
     String siguienteJugadorNombre();
 }
+*/
 
 abstract class Carta {
     protected final Color color;
@@ -34,7 +36,7 @@ abstract class Carta {
         return this;
     }
 */
-    public abstract Function<AccionJuego, Void> aplicarEfecto();
+    public Function<Juego, Void> aplicarEfecto(){return juego -> null;};
     public abstract boolean puedeSerJugadoSobre(Carta carta);
 }
 
@@ -50,9 +52,7 @@ class CartaNumero extends Carta {
         return numero;
     }
 
-    public Function<AccionJuego, Void> aplicarEfecto() {
-        return juego -> null;
-    }
+    //public Function<AccionJuego, Void> aplicarEfecto() {return juego -> null;}
 
 
     public boolean puedeSerJugadoSobre(Carta carta) {  //despues usar double dispatch
@@ -72,10 +72,10 @@ class CartaDraw2 extends Carta {
         super(color);
     }
 
-    public Function<AccionJuego, Void> aplicarEfecto() {
+    public Function<Juego, Void> aplicarEfecto() {
         return juego -> {
             juego.robar(2);
-            juego.saltar();
+            juego.avanzarTurno();
             return null;
         };
     }
@@ -85,7 +85,7 @@ class CartaDraw2 extends Carta {
     }
 
     public String toString() {
-        return color + " +2";
+        return color + " draw2";
     }
 }
 
@@ -95,7 +95,7 @@ class CartaReverse extends Carta {
     }
 
 
-    public Function<AccionJuego, Void> aplicarEfecto() {
+    public Function<Juego, Void> aplicarEfecto() {
         return juego -> null;
     }
 
@@ -114,7 +114,7 @@ class CartaSkip extends Carta {
     }
 
 
-    public Function<AccionJuego, Void> aplicarEfecto() {
+    public Function<Juego, Void> aplicarEfecto() {
         //juego.saltarJugador();
         return juego -> null;
     }
@@ -135,7 +135,7 @@ class CartaWild extends Carta {
         super(Color.NINGUNO);
     }
 
-    public Function<AccionJuego, Void> aplicarEfecto() {
+    public Function<Juego, Void> aplicarEfecto() {
        // elegido = juego.elegirColor();
         return juego -> null;
     }
