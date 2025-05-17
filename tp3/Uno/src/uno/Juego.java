@@ -2,44 +2,41 @@ package uno;
 
 import java.util.*;
 
-
 public class Juego {
     private final Map<String, Jugador> jugadores = new LinkedHashMap<>();
-    private final Deque<Carta> pozo = new ArrayDeque<>();  //creo que con tener 1 carta funcionaría en todos los casos
-    private final Iterator<String> turnos;
-    private String actual;
+    private final Deque<Carta> pozo = new ArrayDeque<>();
     private final Deque<Carta> mazo;
-    private Carta cartaRecienRobada = null;  //para evitar que se juegue carta diferente a la agarrada en ese turno
-    private int direccion = 1; //para carta Reverse
+    private final List<String> orden = new ArrayList<>();
+    private int turno = 0;
+    private int direccion = 1;
+    private Carta cartaRecienRobada = null;
 
     public Juego(List<Carta> cartasIniciales, String... nombres) {
-        for (String nombre : nombres) jugadores.put(nombre, new Jugador(nombre));
+        inicializarJugadores(nombres);
         mazo = new ArrayDeque<>(cartasIniciales.subList(1, cartasIniciales.size()));
-        pozo.push(cartasIniciales.get(0));  //se agrega primera carta de la lista al pozo
-
+        pozo.push(cartasIniciales.get(0));
         repartir();
-        turnos = ciclo(jugadores.keySet());
-        avanzarTurno();
-        // aplicar efecto de la primera carta del pozo si corresponde
+        //avanzarTurno();
         pozo.peek().accionSobre(this);
     }
 
-    //para establecer una cantidad de cartas repartidas a cada jugador
     public Juego(List<Carta> cartasIniciales, int cartasPorJugador, String... nombres) {
-        for (String nombre : nombres) jugadores.put(nombre, new Jugador(nombre));
-
+        inicializarJugadores(nombres);
         pozo.push(cartasIniciales.get(0));
         mazo = new ArrayDeque<>(cartasIniciales.subList(1, cartasIniciales.size()));
-
         repartir(cartasPorJugador);
-        turnos = ciclo(jugadores.keySet());
-        avanzarTurno();
-
-        // aplicar efecto de la primera carta del pozo si corresponde
+        //avanzarTurno();
         pozo.peek().accionSobre(this);
     }
 
-    private void repartir(int cartasPorJugador) {  //se reparte 1 carta a cada jugador (no las n cartas seguidas)
+    private void inicializarJugadores(String... nombres) {
+        for (String nombre : nombres) {
+            jugadores.put(nombre, new Jugador(nombre));
+            orden.add(nombre);
+        }
+    }
+
+    private void repartir(int cartasPorJugador) {
         for (int i = 0; i < cartasPorJugador; i++) {
             for (Jugador j : jugadores.values()) {
                 if (!mazo.isEmpty()) j.recibir(mazo.pop());
@@ -56,7 +53,7 @@ public class Juego {
     }
 
     public void jugarCarta(Carta carta) {
-        Jugador j = jugadores.get(actual);
+        Jugador j = jugadores.get(nombreJugadorDelTurno());
 
         if (cartaRecienRobada != null && carta != cartaRecienRobada)
             throw new IllegalArgumentException("Solo se puede jugar la carta recién robada");
@@ -66,74 +63,45 @@ public class Juego {
 
         j.jugar(carta);
         pozo.push(carta);
-        cartaRecienRobada = null; // se jugó la robada
+        cartaRecienRobada = null;
         avanzarTurno();
         pozo.peek().accionSobre(this);
-
     }
 
-    public void agarrarCartaMazo(){
-        cartaRecienRobada = robar();
-        jugadores.get(actual).recibir(cartaRecienRobada);
+    public void agarrarCartaMazo() {
+        if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
+        cartaRecienRobada = mazo.pop();
+        jugadores.get(nombreJugadorDelTurno()).recibir(cartaRecienRobada);
     }
 
-    public void pasaTurno(){
-        actual = turnos.next();
+    public void avanzarTurno() {
+        turno = (turno + direccion + orden.size()) % orden.size();
     }
 
-    private void validarTurno(String nombre) {
-        if (!actual.equals(nombre)) throw new IllegalArgumentException("No es el turno de " + nombre);
-    }
-
-    //private void avanzarTurno() {actual = turnos.next();}
-
-    //public así lo usa Carta en aplicarEfecto
-    public void avanzarTurno() {actual = turnos.next();}
-/*
-    public boolean cantoUno(String nombre) {
-        return jugadores.get(nombre).cantoUno();
-    }
-*/
-    public Color colorPozo() {
-        return pozo.peek().color();
-    }
+    public Color colorPozo() { return pozo.peek().color();}
 
     public int numPozo() {
         if (pozo.peek() instanceof CartaNumero c) return c.numero();
         throw new IllegalStateException("La carta del pozo no tiene número");
     }
 
-    public String tipoCartaPozo(){ return pozo.peek().toString(); }
+    public String tipoCartaPozo() { return pozo.peek().toString();}
 
-    public int cartasJugador(String nombre) {
-        return jugadores.get(nombre).cantidad();
-    }
+    public int cartasJugador(String nombre) { return jugadores.get(nombre).cantidad();}
 
     private Carta robar() {
         if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
         return mazo.pop();
     }
 
-    //public así metodo de Carta puede usarlo
-    public void robar(int cantidadCartas) { //usado para cuando aparece carta draw2
-        if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
-        for (int i = 0; i < cantidadCartas; i++){
-            Carta carta = mazo.pop();
-            jugadores.get(actual).recibir(carta);
+    public void robar(int cantidadCartas) {
+        for (int i = 0; i < cantidadCartas; i++) {
+            jugadores.get(nombreJugadorDelTurno()).recibir(robar());
         }
     }
 
-    public String nombreJugadorDelTurno(){
-        return actual;
-    }
+    public String nombreJugadorDelTurno() { return orden.get(turno);}
 
-    private Iterator<String> ciclo(Set<String> nombres) {
-        List<String> lista = new ArrayList<>(nombres);
-        return new Iterator<>() {
-            int i = 0;
-            public boolean hasNext() { return true; }
-            public String next() { return lista.get((i++) % lista.size()); }
-        };
-    }
-
+    public void cambiarDireccion() { direccion *= -1; }
 }
+

@@ -91,7 +91,7 @@ public class PartidaTest {
         assertEquals(1, j.cartasJugador("juan"));
         j.agarrarCartaMazo();
         assertEquals(2, j.cartasJugador("juan"));
-        j.pasaTurno();
+        j.avanzarTurno();
         assertEquals("pedro", j.nombreJugadorDelTurno());
     }
 
@@ -132,6 +132,8 @@ public class PartidaTest {
         assertEquals(3, j.cartasJugador("pedro"));
     }
 
+    //hacer test en el que tiren 2 cartas draw2 seguidas
+
     @Test void testJugadorTiraDraw2NoValido() {
         Juego j = new Juego(List.of(r2, tomaDos, r4, r5, r6, r7, r8), 1, "juan", "pedro");
         assertThrows(Throwable.class, () -> j.jugarCarta(tomaDos));
@@ -155,6 +157,13 @@ public class PartidaTest {
         Juego j = new Juego(List.of(r2, saltaRojo, r4, r5, r6, r7, r8), 1, "juan", "pedro", "luis");
         j.jugarCarta(saltaRojo);
         assertEquals("luis", j.nombreJugadorDelTurno()); // salta a luis
+    }
+
+    @Test void testDosJugadoresTiranSkipSeguidosValidos() {
+        Juego j = new Juego(List.of(r2, saltaRojo, r4, saltaAzul, r6, r7, r8), 1, "juan", "pedro", "luis");
+        j.jugarCarta(saltaRojo);
+        j.jugarCarta(saltaAzul);
+        assertEquals("pedro", j.nombreJugadorDelTurno());
     }
 
     @Test void testJugadorTiraSkipNoValido() {
