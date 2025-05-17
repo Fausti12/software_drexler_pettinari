@@ -8,7 +8,7 @@ enum Color {
 
 
 abstract class Carta {
-    protected final Color color;
+    protected Color color;
     //private boolean cantadoUno = false;
 
     public Carta(Color color) {
@@ -117,7 +117,7 @@ class CartaSkip extends Carta {
 }
 
 class CartaWild extends Carta {
-    private Color elegido = Color.NINGUNO;
+    //private Color elegido = Color.NINGUNO;
 
     public CartaWild() {
         super(Color.NINGUNO);
@@ -129,13 +129,13 @@ class CartaWild extends Carta {
 
     public boolean puedeSerJugadoSobre(Carta carta) { return true;}
 
-    public boolean teGustaColor(Color color) { return color == this.elegido;}
+    public boolean teGustaColor(Color color) { return color == this.color;}
 
-    public void asignarColor(Color color) { elegido = color; }
+    public void asignarColor(Color color) { this.color = color; }
 
-    public Color color() {return elegido;}
+    public Color color() {return this.color;}
 
-    public String toString() { return "WILD(" + elegido + ")";}
+    public String toString() { return "WILD(" + this.color + ")";}
 }
 
 
