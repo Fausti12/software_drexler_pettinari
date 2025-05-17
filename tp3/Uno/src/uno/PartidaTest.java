@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
 public class PartidaTest {
-    private Carta r2, r3, r4, r5, r6, r7, r8, a2, a7, tomaDos;
+    private Carta r2, r3, r4, r5, r6, r7, r8, a2, a7, tomaDos, saltaAzul, saltaRojo;
 
     @BeforeEach public void setUp(){
         r2 = new CartaNumero(Color.ROJO, 2); //se podria pasar Strings y que Juego cree clase Carta
@@ -20,6 +20,8 @@ public class PartidaTest {
         a2 = new CartaNumero(Color.AZUL, 2);
         a7 = new CartaNumero(Color.AZUL, 7);
         tomaDos = new CartaDraw2(Color.AZUL);
+        saltaAzul = new CartaSkip(Color.AZUL);
+        saltaRojo = new CartaSkip(Color.ROJO);
     }
 
     @Test void testPozoInicialConUnaCarta() {
@@ -110,30 +112,54 @@ public class PartidaTest {
         assertThrows(Throwable.class, () -> j.jugarCarta(r3));
     }
 
-    //ver cómo implementar aplicarEfecto
-    @Test void testCartaInicialEnPozoEsTomaDosCartas() {
+    //tests sobre carta Draw2
+    @Test void testCartaInicialEnPozoEsDraw2() {
         Juego j = new Juego(List.of(tomaDos, r2, r3, r4, r5, r6), 1, "juan", "pedro");
-        assertEquals(Color.AZUL, j.colorPozo());
-        assertThrows(Throwable.class, () -> j.numPozo());
+        assertEquals("AZUL draw2", j.tipoCartaPozo());
     }
 
-    @Test void testJugadorAgarraCartasAlHaberTomaDosCartasEnPozoInicial() {
+    @Test void testJugadorAgarraCartasAlHaberDraw2EnPozoInicial() {
         Juego j = new Juego(List.of(tomaDos, r2, r3, r4, r5, r6), 1, "juan", "pedro");
         assertEquals(3, j.cartasJugador("juan"));
         assertEquals(1, j.cartasJugador("pedro"));
     }
 
 
-    @Test void testJugadorAgarraCartasLuegoQueOtroTireTomaDosCartasValido() {
+    @Test void testJugadorAgarraCartasLuegoQueOtroTireDraw2Valido() {
         Juego j = new Juego(List.of(a7, tomaDos, r4, r5, r6, r7, r8), 1, "juan", "pedro");
         //pozo: a7, juan: tiene draw2 azul, pedro: tiene r4
         j.jugarCarta(tomaDos);
         assertEquals(3, j.cartasJugador("pedro"));
     }
 
-    @Test void testJugadorTiraTomaDosCartasNoValido() {
+    @Test void testJugadorTiraDraw2NoValido() {
         Juego j = new Juego(List.of(r2, tomaDos, r4, r5, r6, r7, r8), 1, "juan", "pedro");
         assertThrows(Throwable.class, () -> j.jugarCarta(tomaDos));
+    }
+
+
+    //tests sobre carta Skip
+
+    @Test void testCartaInicialEnPozoEsSkip() {
+        Juego j = new Juego(List.of(saltaAzul, r2, r3, r4, r5, r6), 1, "juan", "pedro");
+        assertEquals(Color.AZUL, j.colorPozo());
+        assertThrows(Throwable.class, () -> j.numPozo());
+    }
+
+    @Test void testJugadorEsSaltadoConSkipInicial() {
+        Juego j = new Juego(List.of(saltaAzul, r2, r3, r4, r5, r6), 1, "juan", "pedro");
+        assertEquals("pedro", j.nombreJugadorDelTurno()); // turno salta a pedro
+    }
+
+    @Test void testJugadorTiraSkipValidoYSaltaAlSiguiente() {
+        Juego j = new Juego(List.of(r2, saltaRojo, r4, r5, r6, r7, r8), 1, "juan", "pedro", "luis");
+        j.jugarCarta(saltaRojo);
+        assertEquals("luis", j.nombreJugadorDelTurno()); // salta a luis
+    }
+
+    @Test void testJugadorTiraSkipNoValido() {
+        Juego j = new Juego(List.of(r2, saltaAzul, r4, r5, r6, r7, r8), 1, "juan", "pedro");
+        assertThrows(Throwable.class, () -> j.jugarCarta(saltaAzul));
     }
 
 

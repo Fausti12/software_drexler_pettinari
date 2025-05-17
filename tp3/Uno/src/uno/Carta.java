@@ -22,7 +22,6 @@ abstract class Carta {
     public Carta(Color color) {
         this.color = color;
     }
-
     public Color color() {
         return color;
     }
@@ -36,8 +35,16 @@ abstract class Carta {
         return this;
     }
 */
-    public Function<Juego, Void> aplicarEfecto(){return juego -> null;};
+    public abstract void accionSobre(Juego juego);
     public abstract boolean puedeSerJugadoSobre(Carta carta);
+    // Protocolo de aceptación
+    public boolean teGustaColor(Color color) {return this.color == color;}
+    public boolean teGustaNumero(int numero) {return false;}
+    public boolean teGustaMiTipo(Class<? extends Carta> tipo) {return this.getClass() == tipo;}
+
+    public int numero() {
+        return -1; // valor inválido por defecto
+    }
 }
 
 class CartaNumero extends Carta {
@@ -52,14 +59,15 @@ class CartaNumero extends Carta {
         return numero;
     }
 
-    //public Function<AccionJuego, Void> aplicarEfecto() {return juego -> null;}
+    public boolean teGustaNumero(int numero) { return this.numero == numero;}
 
+    public boolean puedeSerJugadoSobre(Carta otra) {
+        return otra.teGustaColor(this.color) || otra.teGustaNumero(this.numero) ;
+        //si otra carta no tiene numero, devuelve false (default clase)
+    }
 
-    public boolean puedeSerJugadoSobre(Carta carta) {  //despues usar double dispatch
-        if (carta instanceof CartaNumero otra) {
-            return this.color == carta.color() || this.numero == otra.numero();
-        }
-        return this.color == carta.color();
+    public void accionSobre(Juego juego) {
+        // Sin efecto especial
     }
 
     public String toString() {
@@ -68,39 +76,29 @@ class CartaNumero extends Carta {
 }
 
 class CartaDraw2 extends Carta {
-    public CartaDraw2(Color color) {
-        super(color);
+    public CartaDraw2(Color color) {super(color);}
+
+    public void accionSobre(Juego juego) {
+        juego.robar(2);
+        juego.avanzarTurno();
     }
 
-    public Function<Juego, Void> aplicarEfecto() {
-        return juego -> {
-            juego.robar(2);
-            juego.avanzarTurno();
-            return null;
-        };
+    public boolean puedeSerJugadoSobre(Carta otra) {
+        return otra.teGustaColor(this.color) || otra.teGustaMiTipo(this.getClass());
     }
 
-    public boolean puedeSerJugadoSobre(Carta carta) {
-        return this.color == carta.color() || carta instanceof CartaDraw2;
-    }
-
-    public String toString() {
-        return color + " draw2";
-    }
+    public String toString() {return color + " draw2";}
 }
 
 class CartaReverse extends Carta {
-    public CartaReverse(Color color) {
-        super(color);
+    public CartaReverse(Color color) {super(color);}
+
+    public void accionSobre(Juego juego) {
+        // Podría invertir dirección si se implementa
     }
 
-
-    public Function<Juego, Void> aplicarEfecto() {
-        return juego -> null;
-    }
-
-    public boolean puedeSerJugadoSobre(Carta carta) {
-        return this.color == carta.color() || carta instanceof CartaReverse;
+    public boolean puedeSerJugadoSobre(Carta otra) {
+        return otra.teGustaColor(this.color) || otra.teGustaMiTipo(this.getClass());
     }
 
     public String toString() {
@@ -109,18 +107,14 @@ class CartaReverse extends Carta {
 }
 
 class CartaSkip extends Carta {
-    public CartaSkip(Color color) {
-        super(color);
+    public CartaSkip(Color color) {super(color);}
+
+    public void accionSobre(Juego juego) {
+        juego.pasaTurno();
     }
 
-
-    public Function<Juego, Void> aplicarEfecto() {
-        //juego.saltarJugador();
-        return juego -> null;
-    }
-
-    public boolean puedeSerJugadoSobre(Carta carta) {
-        return this.color == carta.color() || carta instanceof CartaSkip;
+    public boolean puedeSerJugadoSobre(Carta otra) {
+        return otra.teGustaColor(this.color) || otra.teGustaMiTipo(this.getClass());
     }
 
     public String toString() {
@@ -135,20 +129,13 @@ class CartaWild extends Carta {
         super(Color.NINGUNO);
     }
 
-    public Function<Juego, Void> aplicarEfecto() {
-       // elegido = juego.elegirColor();
-        return juego -> null;
+    public void accionSobre(Juego juego) {
+        // juego.elegirColor();
     }
 
-    public boolean puedeSerJugadoSobre(Carta carta) {
-        return true;
-    }
+    public boolean puedeSerJugadoSobre(Carta carta) { return true;}
 
-    public Color color() {
-        return elegido;
-    }
+    public Color color() {return elegido;}
 
-    public String toString() {
-        return "WILD(" + elegido + ")";
-    }
+    public String toString() { return "WILD(" + elegido + ")";}
 }

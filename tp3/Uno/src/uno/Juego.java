@@ -21,7 +21,7 @@ public class Juego {
         turnos = ciclo(jugadores.keySet());
         avanzarTurno();
         // aplicar efecto de la primera carta del pozo si corresponde
-        pozo.peek().aplicarEfecto().apply(this);
+        pozo.peek().accionSobre(this);
     }
 
     //para establecer una cantidad de cartas repartidas a cada jugador
@@ -36,7 +36,7 @@ public class Juego {
         avanzarTurno();
 
         // aplicar efecto de la primera carta del pozo si corresponde
-        pozo.peek().aplicarEfecto().apply(this);
+        pozo.peek().accionSobre(this);
     }
 
     private void repartir(int cartasPorJugador) {  //se reparte 1 carta a cada jugador (no las n cartas seguidas)
@@ -68,7 +68,7 @@ public class Juego {
         pozo.push(carta);
         cartaRecienRobada = null; // se jugó la robada
         avanzarTurno();
-        pozo.peek().aplicarEfecto().apply(this);
+        pozo.peek().accionSobre(this);
 
     }
 
@@ -103,6 +103,8 @@ public class Juego {
         throw new IllegalStateException("La carta del pozo no tiene número");
     }
 
+    public String tipoCartaPozo(){ return pozo.peek().toString(); }
+
     public int cartasJugador(String nombre) {
         return jugadores.get(nombre).cantidad();
     }
@@ -133,4 +135,5 @@ public class Juego {
             public String next() { return lista.get((i++) % lista.size()); }
         };
     }
+
 }
