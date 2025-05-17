@@ -6,14 +6,6 @@ enum Color {
     ROJO, AZUL, VERDE, AMARILLO, NINGUNO;
 }
 
-/*
-interface AccionJuego {
-    void robar(int cantidad);
-    void saltar();
-    void cambiarDireccion();
-    String siguienteJugadorNombre();
-}
-*/
 
 abstract class Carta {
     protected final Color color;
@@ -41,6 +33,8 @@ abstract class Carta {
     public boolean teGustaColor(Color color) {return this.color == color;}
     public boolean teGustaNumero(int numero) {return false;}
     public boolean teGustaMiTipo(Class<? extends Carta> tipo) {return this.getClass() == tipo;}
+
+    public void asignarColor(Color color) {throw new Error();}
 
     public int numero() {
         return -1; // valor inválido por defecto
@@ -118,7 +112,7 @@ class CartaSkip extends Carta {
     }
 
     public String toString() {
-        return color + " Skip";
+        return "SKIP " + color;
     }
 }
 
@@ -134,6 +128,10 @@ class CartaWild extends Carta {
     }
 
     public boolean puedeSerJugadoSobre(Carta carta) { return true;}
+
+    public boolean teGustaColor(Color color) { return color == this.elegido;}
+
+    public void asignarColor(Color color) { elegido = color; }
 
     public Color color() {return elegido;}
 
@@ -153,6 +151,10 @@ class CartaWildDraw4 extends Carta {
     }
 
     public boolean puedeSerJugadoSobre(Carta carta) { return true;}
+
+    public boolean teGustaColor(Color color) { return color == this.elegido;}
+
+    public void asignarColor(Color color) {elegido = color;}
 
     public Color color() {return elegido;}
 

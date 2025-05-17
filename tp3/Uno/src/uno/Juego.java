@@ -9,7 +9,7 @@ public class Juego {
     private final List<String> orden = new ArrayList<>();
     private int turno = 0;
     private int direccion = 1;
-    private Carta cartaRecienRobada = null;
+    private Carta cartaRecienRobada = null; //para que no juega carta diferente a la que agarra en ese turno
 
     public Juego(List<Carta> cartasIniciales, String... nombres) {
         inicializarJugadores(nombres);
@@ -76,6 +76,10 @@ public class Juego {
 
     public void avanzarTurno() {
         turno = (turno + direccion + orden.size()) % orden.size();
+    }
+
+    public void asignarColorAComodin(Color color) {
+        pozo.peek().asignarColor(color);
     }
 
     public Color colorPozo() { return pozo.peek().color();}

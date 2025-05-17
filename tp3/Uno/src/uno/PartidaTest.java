@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
 public class PartidaTest {
-    private Carta r2, r3, r4, r5, r6, r7, r8, a2, a7, tomaDos, saltaAzul, saltaRojo;
+    private Carta r2, r3, r4, r5, r6, r7, r8, a2, a7, tomaDos, saltaAzul, saltaRojo, comodin;
 
     @BeforeEach public void setUp(){
         r2 = new CartaNumero(Color.ROJO, 2); //se podria pasar Strings y que Juego cree clase Carta
@@ -22,6 +22,7 @@ public class PartidaTest {
         tomaDos = new CartaDraw2(Color.AZUL);
         saltaAzul = new CartaSkip(Color.AZUL);
         saltaRojo = new CartaSkip(Color.ROJO);
+        comodin = new CartaWild();
     }
 
     @Test void testPozoInicialConUnaCarta() {
@@ -105,7 +106,7 @@ public class PartidaTest {
     }
 
     @Test void testJugadorRobaCartaYTiraDistintaCarta() {
-        Juego j = new Juego(List.of(r2, r3, r4, r5, r6), 1, "juan", "pedro");
+        Juego j = new Juego(List.of(r2,r3, r4, r5, r6), 1, "juan", "pedro");
         assertEquals(1, j.cartasJugador("juan"));
         j.agarrarCartaMazo();
         assertEquals(2, j.cartasJugador("juan"));
@@ -144,8 +145,7 @@ public class PartidaTest {
 
     @Test void testCartaInicialEnPozoEsSkip() {
         Juego j = new Juego(List.of(saltaAzul, r2, r3, r4, r5, r6), 1, "juan", "pedro");
-        assertEquals(Color.AZUL, j.colorPozo());
-        assertThrows(Throwable.class, () -> j.numPozo());
+        assertEquals("SKIP AZUL", j.tipoCartaPozo());
     }
 
     @Test void testJugadorEsSaltadoConSkipInicial() {
@@ -169,6 +169,29 @@ public class PartidaTest {
     @Test void testJugadorTiraSkipNoValido() {
         Juego j = new Juego(List.of(r2, saltaAzul, r4, r5, r6, r7, r8), 1, "juan", "pedro");
         assertThrows(Throwable.class, () -> j.jugarCarta(saltaAzul));
+    }
+
+
+    // tests de carta comodin
+
+    @Test void testCartaInicialEnPozoEsWild() {
+        Juego j = new Juego(List.of(comodin, r2, r3, r4, r5, r6), 1, "juan", "pedro");
+        assertEquals("WILD(NINGUNO)", j.tipoCartaPozo());
+    }
+
+    @Test void testJugadorEligeColorYTiraConWildInicial() {
+        Juego j = new Juego(List.of(comodin, r2, r3, r4, r5, r6), 2, "juan", "pedro");
+        j.asignarColorAComodin(Color.ROJO);
+        assertEquals("WILD(ROJO)", j.tipoCartaPozo());
+        j.jugarCarta(r2);
+        assertEquals(1, j.cartasJugador("juan"));
+    }
+
+    @Test void testJugadorEligeColorYTiraCartaErroneaConWildInicial() {
+        Juego j = new Juego(List.of(comodin, r2, r3, a2, r5, r6), 2, "juan", "pedro");
+        j.asignarColorAComodin(Color.ROJO);
+        assertEquals("WILD(ROJO)", j.tipoCartaPozo());
+        assertThrows(Throwable.class, () -> j.jugarCarta(a2));
     }
 
 
