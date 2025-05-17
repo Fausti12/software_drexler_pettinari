@@ -107,4 +107,7 @@ public class RingTest {
                                                  .remove()
                                                  .current() );
     }
+
 }
+
+
