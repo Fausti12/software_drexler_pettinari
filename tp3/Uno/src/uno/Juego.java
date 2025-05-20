@@ -2,6 +2,8 @@ package uno;
 
 import java.util.*;
 
+import static java.lang.System.*;
+
 public class Juego {
     private final Map<String, Jugador> jugadores = new LinkedHashMap<>();
     private final Deque<Carta> pozo = new ArrayDeque<>();
@@ -10,15 +12,6 @@ public class Juego {
     private int turno = 0;
     private int direccion = 1;
     private Carta cartaRecienRobada = null; //para que no juega carta diferente a la que agarra en ese turno
-
-    public Juego(List<Carta> cartasIniciales, String... nombres) {
-        inicializarJugadores(nombres);
-        mazo = new ArrayDeque<>(cartasIniciales.subList(1, cartasIniciales.size()));
-        pozo.push(cartasIniciales.get(0));
-        repartir();
-        //avanzarTurno();
-        pozo.peek().accionSobre(this);
-    }
 
     public Juego(List<Carta> cartasIniciales, int cartasPorJugador, String... nombres) {
         inicializarJugadores(nombres);
@@ -31,7 +24,7 @@ public class Juego {
 
     private void inicializarJugadores(String... nombres) {
         for (String nombre : nombres) {
-            jugadores.put(nombre, new Jugador(nombre));
+            jugadores.put(nombre, new Jugador());
             orden.add(nombre);
         }
     }
@@ -44,15 +37,30 @@ public class Juego {
         }
     }
 
-    private void repartir() {
-        while (!mazo.isEmpty()) {
-            jugadores.values().forEach(j -> {
-                if (!mazo.isEmpty()) j.recibir(mazo.pop());
-            });
-        }
+
+    public void jugarCartaYCantoUno(Carta carta) {
+        jugarCarta(carta);
+
+        // Si canta uno pero en realidad no le queda 1, darle 2 cartas de penalidad
+        if (jugadores.get(nombreJugadorDelTurno()).cantidad() != 1)
+            robar(2);
+
+        avanzarTurno();
+        pozo.peek().accionSobre(this);
     }
 
-    public void jugarCarta(Carta carta) {
+    public void jugarCartaSinCantar(Carta carta) {
+        jugarCarta(carta);
+
+        // si el jugador tiene 1 sola carta, sumarle 2 por no cantar
+        if (jugadores.get(nombreJugadorDelTurno()).cantidad() == 1)
+            robar(2);
+
+        avanzarTurno();
+        pozo.peek().accionSobre(this);
+    }
+
+    private void jugarCarta(Carta carta) {
         Jugador j = jugadores.get(nombreJugadorDelTurno());
 
         if (cartaRecienRobada != null && carta != cartaRecienRobada)
@@ -64,8 +72,6 @@ public class Juego {
         j.jugar(carta);
         pozo.push(carta);
         cartaRecienRobada = null;
-        avanzarTurno();
-        pozo.peek().accionSobre(this);
     }
 
     public void agarrarCartaMazo() {
@@ -75,7 +81,8 @@ public class Juego {
     }
 
     public void avanzarTurno() {
-        turno = (turno + direccion + orden.size()) % orden.size();
+        //turno = (turno + direccion + orden.size()) % orden.size();
+        turno = (turno + direccion) % orden.size();
     }
 
     public void asignarColorAComodin(Color color) {

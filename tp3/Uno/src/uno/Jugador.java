@@ -6,13 +6,9 @@ import java.util.List;
 
 
 public class Jugador {
-    private final String nombre;
+    // borrado el atributo nombre de jugador
     private final List<Carta> mano = new ArrayList<>();
     //private boolean cantoUno = false;
-
-    public Jugador(String nombre) {
-        this.nombre = nombre;
-    }
 
     public void recibir(Carta carta) {
         mano.add(carta);

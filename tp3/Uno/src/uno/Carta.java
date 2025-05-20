@@ -9,7 +9,7 @@ enum Color {
 
 abstract class Carta {
     protected Color color;
-    //private boolean cantadoUno = false;
+    private boolean cantadoUno = false;
 
     public Carta(Color color) {
         this.color = color;
@@ -21,12 +21,12 @@ abstract class Carta {
     public boolean fueCantadoUno() {
         return cantadoUno;
     }
-
+*/
     public Carta uno() {
         this.cantadoUno = true;
         return this;
     }
-*/
+
     public abstract void accionSobre(Juego juego);
     public abstract boolean puedeSerJugadoSobre(Carta carta);
     // Protocolo de aceptación
