@@ -4,20 +4,22 @@ import java.util.*;
 
 public class Juego {
     private final Map<String, Jugador> jugadores = new LinkedHashMap<>();
-    private final Deque<Carta> pozo = new ArrayDeque<>();
+    //private final Deque<Carta> pozo = new ArrayDeque<>();
+    private Carta pozo;
     private final Deque<Carta> mazo;
-    private final List<String> orden = new ArrayList<>();
+    private final List<String> orden = new ArrayList<>();  //tal vez no haga falta
     private int turno = 0;
     private int direccion = 1;
     private Carta cartaRecienRobada = null; //para que no juega carta diferente a la que agarra en ese turno
 
     public Juego(List<Carta> cartasIniciales, int cartasPorJugador, String... nombres) {
         inicializarJugadores(nombres);
-        pozo.push(cartasIniciales.get(0));
+        //pozo.push(cartasIniciales.get(0));
+        pozo = cartasIniciales.get(0);
         mazo = new ArrayDeque<>(cartasIniciales.subList(1, cartasIniciales.size()));
         repartir(cartasPorJugador);
-        //avanzarTurno();
-        pozo.peek().accionSobre(this);
+        //pozo.peek().accionSobre(this);
+        pozo.accionInicial(this);
     }
 
     private void inicializarJugadores(String... nombres) {
@@ -41,50 +43,77 @@ public class Juego {
         if (cartaRecienRobada != null && carta != cartaRecienRobada)
             throw new IllegalArgumentException("Solo se puede jugar la carta recién robada");
 
-        if (!carta.puedeSerJugadoSobre(pozo.peek()))
+        if (!carta.puedeSerJugadoSobre(pozo))
             throw new IllegalArgumentException("Jugada inválida");
 
+        //if (carta instanceof CartaWild wild && wild.color() == Color.NINGUNO) //si jugador no eligió color luego de tirar comodin
+          //  throw new IllegalStateException("No se eligió color para el comodín");
+
         j.jugar(carta);
-        pozo.push(carta);
+        //pozo.push(carta);
+        pozo = carta;
         cartaRecienRobada = null;
-        avanzarTurno();
-        pozo.peek().accionSobre(this);
+        chequearSiTieneUnaCartaYCantaUno();
+        //avanzarTurno();
+        //pozo.peek().accionSobre(this);
+        pozo.accionSobre(this);
+    }
+
+    //cuando se juega un Comodin
+    public void jugarCarta(Carta cartaComodin, Color colorElegido) {
+        cartaComodin.asignarColor(colorElegido);
+        jugarCarta(cartaComodin);
+    }
+
+    public void robar(int cantidadCartas) {
+        //if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
+        for (int i = 0; i < cantidadCartas; i++) {
+            chequearMazoQuedaVacio();
+            jugadores.get(nombreJugadorDelTurno()).recibir(mazo.pop());
+        }
     }
 
     public void agarrarCartaMazo() {
-        if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
+        Jugador j = jugadores.get(nombreJugadorDelTurno());
+        if (j.tieneCartaJugable(pozo)) throw new IllegalStateException("No puede agarrar carta si tiene una jugable");
+        //if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
+        chequearMazoQuedaVacio();
+
         cartaRecienRobada = mazo.pop();
-        jugadores.get(nombreJugadorDelTurno()).recibir(cartaRecienRobada);
+        j.recibir(cartaRecienRobada);
     }
 
     public void avanzarTurno() {
         turno = (turno + direccion + orden.size()) % orden.size();
     }
 
-    public void asignarColorAComodin(Color color) {
-        pozo.peek().asignarColor(color);
+    // se usa cuando hay Comodin en pozo inicial
+    public void asignarColorAComodin(Color color) {pozo.asignarColor(color);}
+
+    public void cambiarDireccion() { direccion *= -1; }
+
+    private void chequearMazoQuedaVacio(){
+        if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
     }
 
-    public Color colorPozo() { return pozo.peek().color();}
+    private void chequearSiTieneUnaCartaYCantaUno() {
+        Jugador j = jugadores.get(nombreJugadorDelTurno());
+        if (j.tieneUnaCarta() && !pozo.fueCantadoUno()) { robar(2); } //carta en pozo fue jugada por el actual
+        if (!j.tieneUnaCarta() && pozo.fueCantadoUno()) { throw new Error(); } // Cantar en mal momento -> tirar fallo
+    }
+
+    public Color colorPozo() { return pozo.color();}
 
     public int numPozo() {
-        if (pozo.peek() instanceof CartaNumero c) return c.numero();
+        if (pozo instanceof CartaNumero c) return c.numero();
         throw new IllegalStateException("La carta del pozo no tiene número");
     }
 
-    public String tipoCartaPozo() { return pozo.peek().toString();}
+    public String tipoCartaPozo() { return pozo.toString();}
 
     public int cartasJugador(String nombre) { return jugadores.get(nombre).cantidad();}
 
-    public void robar(int cantidadCartas) {
-        if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
-        for (int i = 0; i < cantidadCartas; i++) {
-            jugadores.get(nombreJugadorDelTurno()).recibir(mazo.pop());
-        }
-    }
-
     public String nombreJugadorDelTurno() { return orden.get(turno);}
 
-    public void cambiarDireccion() { direccion *= -1; }
 }
 
