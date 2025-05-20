@@ -4,7 +4,6 @@ import java.util.*;
 
 public class Juego {
     private final Map<String, Jugador> jugadores = new LinkedHashMap<>();
-    //private final Deque<Carta> pozo = new ArrayDeque<>();
     private Carta pozo;
     private final Deque<Carta> mazo;
     private final List<String> orden = new ArrayList<>();  //tal vez no haga falta
@@ -14,11 +13,9 @@ public class Juego {
 
     public Juego(List<Carta> cartasIniciales, int cartasPorJugador, String... nombres) {
         inicializarJugadores(nombres);
-        //pozo.push(cartasIniciales.get(0));
         pozo = cartasIniciales.get(0);
         mazo = new ArrayDeque<>(cartasIniciales.subList(1, cartasIniciales.size()));
         repartir(cartasPorJugador);
-        //pozo.peek().accionSobre(this);
         pozo.accionInicial(this);
     }
 
@@ -50,12 +47,10 @@ public class Juego {
           //  throw new IllegalStateException("No se eligió color para el comodín");
 
         j.jugar(carta);
-        //pozo.push(carta);
         pozo = carta;
         cartaRecienRobada = null;
         chequearSiTieneUnaCartaYCantaUno();
-        //avanzarTurno();
-        //pozo.peek().accionSobre(this);
+        chequearSiGanoJugador();
         pozo.accionSobre(this);
     }
 
@@ -102,6 +97,17 @@ public class Juego {
         if (!j.tieneUnaCarta() && pozo.fueCantadoUno()) { throw new Error(); } // Cantar en mal momento -> tirar fallo
     }
 
+    private void chequearSiGanoJugador() {
+        String nombre = nombreJugadorDelTurno();
+        Jugador j = jugadores.get(nombre);
+
+        if (j.cantidad() == 0) {
+            jugadores.remove(nombre);
+            orden.remove(nombre);
+            turno = (turno - 1 + orden.size()) % orden.size();
+        }
+    }
+
     public Color colorPozo() { return pozo.color();}
 
     public int numPozo() {
@@ -114,6 +120,10 @@ public class Juego {
     public int cartasJugador(String nombre) { return jugadores.get(nombre).cantidad();}
 
     public String nombreJugadorDelTurno() { return orden.get(turno);}
+
+    public int cantidadJugadoresEnJuego() { return jugadores.size();}
+
+    public boolean contieneJugador(String jugador) { return jugadores.containsKey(jugador); }
 
 }
 
