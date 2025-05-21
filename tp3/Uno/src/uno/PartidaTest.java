@@ -250,8 +250,7 @@ public class PartidaTest {
 
     @Test void testJugadorTiraWildYEligeColor() {
         Juego j = new Juego(List.of(r2, comodin,  r3, a2, r5, r6, r7, r8), 3, "juan", "pedro");
-        j.jugarCarta(comodin, Color.ROJO);
-        //j.asignarColorAComodin(Color.ROJO);
+        j.jugarCarta(comodin.asignarColor(Color.ROJO));
         assertEquals("WILD(ROJO)", j.tipoCartaPozo());
         assertEquals(2, j.cartasJugador("juan"));
     }

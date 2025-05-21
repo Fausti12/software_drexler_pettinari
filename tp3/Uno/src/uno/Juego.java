@@ -54,12 +54,6 @@ public class Juego {
         pozo.accionSobre(this);
     }
 
-    //cuando se juega un Comodin
-    public void jugarCarta(Carta cartaComodin, Color colorElegido) {
-        cartaComodin.asignarColor(colorElegido);
-        jugarCarta(cartaComodin);
-    }
-
     public void robar(int cantidadCartas) {
         //if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
         for (int i = 0; i < cantidadCartas; i++) {

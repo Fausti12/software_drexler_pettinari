@@ -37,7 +37,7 @@ abstract class Carta {
     public boolean teGustaNumero(int numero) { return false; }
     public boolean teGustaMiTipo(Class<? extends Carta> tipo) { return this.getClass() == tipo; }
 
-    public void asignarColor(Color color) { throw new Error(); }
+    public Carta asignarColor(Color color) { throw new Error(); }
 
 }
 
@@ -141,7 +141,10 @@ class CartaWild extends Carta {
         return color == this.color;
     }
 
-    public void asignarColor(Color color) { this.color = color; }
+    public Carta asignarColor(Color color) {
+        this.color = color;
+        return this;
+    }
 
     public Color color() {return this.color;}
 
@@ -166,7 +169,10 @@ class CartaWildDraw4 extends Carta {
         return color == this.color;
     }
 
-    public void asignarColor(Color color) { this.color = color; }
+    public Carta asignarColor(Color color) {
+        this.color = color;
+        return this;
+    }
 
     public Color color() {return this.color;}
 
