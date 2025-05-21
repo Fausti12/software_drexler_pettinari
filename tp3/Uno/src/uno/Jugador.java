@@ -4,16 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Jugador {
-    private final String nombre;
+    private String nombre;
     private final List<Carta> mano = new ArrayList<>();
+    public Jugador(String nombre) {this.nombre = nombre;}
 
-    public Jugador(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void recibir(Carta carta) {
-        mano.add(carta);
-    }
+    public void recibir(Carta carta) { mano.add(carta); }
 
     public void jugar(Carta carta) {
         if (!mano.contains(carta)) throw new IllegalArgumentException("La carta no está en la mano");
