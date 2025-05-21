@@ -11,8 +11,11 @@ public class Jugador {
     public void recibir(Carta carta) { mano.add(carta); }
 
     public void jugar(Carta carta) {
-        if (!mano.contains(carta)) throw new IllegalArgumentException("La carta no está en la mano");
-        mano.remove(carta);
+        Carta cartaDelMazo = mano.stream().filter(c -> c.toString().equals(carta.toString())).findFirst().orElse(null);
+        if ( cartaDelMazo == null ) {
+            throw new IllegalArgumentException("La carta no está en la mano");
+        }
+        mano.remove(cartaDelMazo);
     }
 
     public boolean tieneCartaJugable(Carta pozo) {

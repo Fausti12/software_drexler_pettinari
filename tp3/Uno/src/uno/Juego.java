@@ -40,7 +40,7 @@ public class Juego {
     public void jugarCarta(Carta carta) {
         Jugador j = jugadores.get(nombreJugadorDelTurno());
 
-        if (cartaRecienRobada != null && carta != cartaRecienRobada)
+        if (cartaRecienRobada != null && carta.toString() == cartaRecienRobada.toString())
             throw new IllegalArgumentException("Solo se puede jugar la carta recién robada");
 
         if (!carta.puedeSerJugadoSobre(pozo))  throw new IllegalArgumentException("Jugada inválida");

@@ -149,7 +149,7 @@ class CartaWild extends Carta {
 
     public Color color() {return this.color;}
 
-    public String toString() { return "WILD(" + this.color + ")";}
+    public String toString() { return "WILD";}
 }
 
 
@@ -177,5 +177,5 @@ class CartaWildDraw4 extends Carta {
 
     public Color color() {return this.color;}
 
-    public String toString() { return "WILD4(" + this.color + ")";}
+    public String toString() { return "WILD4";}
 }

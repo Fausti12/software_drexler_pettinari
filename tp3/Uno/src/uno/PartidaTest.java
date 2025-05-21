@@ -75,7 +75,7 @@ public class PartidaTest {
 
     @Test void testJugadorJuegaCartaPorColor() {
         Juego j = new Juego(mazoBasicoRojo, 1, "juan", "pedro");
-        j.jugarCarta(r3);
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3));
 
         assertEquals(Color.ROJO, j.colorPozo());
         assertEquals(3, j.numPozo());
@@ -83,7 +83,7 @@ public class PartidaTest {
 
     @Test void testJugadorJuegaCartaPorNumero() {
         Juego j = new Juego(mazoBasico3, 1, "juan", "pedro");
-        j.jugarCarta(a2);
+        j.jugarCarta(new CartaNumero(Color.AZUL, 2));
 
         assertEquals(Color.AZUL, j.colorPozo());
         assertEquals(2, j.numPozo());
@@ -101,17 +101,17 @@ public class PartidaTest {
 
     @Test void testJugadorJuegaCartaQueYaTiro() {
         Juego j = new Juego(mazoBasicoRojo, 3, "juan", "pedro");
-        j.jugarCarta(r3);
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3));
         assertEquals("pedro", j.nombreJugadorDelTurno());
-        j.jugarCarta(r4);
-        assertThrows(Throwable.class, () -> j.jugarCarta(r3));
+        j.jugarCarta(new CartaNumero(Color.ROJO, 4));
+        assertThrows(Throwable.class, () -> j.jugarCarta(new CartaNumero(Color.ROJO, 3)));
     }
 
     @Test void testJugadorJuegaLasDosCartasRepetidas() {
         Juego j = new Juego(mazoRepetidas, 4, "juan", "pedro");
-        j.jugarCarta(r3);
-        j.jugarCarta(r4); //juega pedro
-        j.jugarCarta(r3);
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3));
+        j.jugarCarta(new CartaNumero(Color.ROJO, 4)); //juega pedro
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3));
         assertEquals(2, j.cartasJugador("juan"));
     }
 
@@ -119,7 +119,7 @@ public class PartidaTest {
     @Test void testJugadorRobaCartaYTira() {
         Juego j = new Juego(mazoRobarYJugar, 2, "juan", "pedro");
         j.agarrarCartaMazo();
-        j.jugarCarta(r7);  //solo puede tirar la que agarró
+        j.jugarCarta(new CartaNumero(Color.ROJO, 7));  //solo puede tirar la que agarró
         assertEquals(2, j.cartasJugador("juan"));
     }
 
@@ -128,7 +128,7 @@ public class PartidaTest {
         j.agarrarCartaMazo();
         j.agarrarCartaMazo();
         j.agarrarCartaMazo();
-        j.jugarCarta(a2);
+        j.jugarCarta(new CartaNumero(Color.AZUL, 2));
         assertEquals(3, j.cartasJugador("juan"));
     }
 
@@ -159,7 +159,7 @@ public class PartidaTest {
     @Test void testJugadorAgarraCartasLuegoQueOtroTireDraw2Valido() {
         Juego j = new Juego(mazoConDraw2ParaJugador1, 1, "juan", "pedro");
         //pozo: a7, juan: tiene draw2 azul, pedro: tiene r4
-        j.jugarCarta(tomaDosAzul);
+        j.jugarCarta(new CartaDraw2(Color.AZUL));
         assertEquals(3, j.cartasJugador("pedro"));
     }
 
@@ -181,15 +181,15 @@ public class PartidaTest {
     @Test void testJugadorTiraReverseYDireccionCambia() {
         Juego j = new Juego(mazoConReverseEnMedio, 3,
                 "juan", "pedro", "luis");
-        j.jugarCarta(r3); //juega juan
-        j.jugarCarta(reversaRojo); //juega pedro
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3)); //juega juan
+        j.jugarCarta(new CartaReverse(Color.ROJO)); // juega pedro
         assertEquals("juan", j.nombreJugadorDelTurno());
     }
 
     @Test void testPrimerJugadorTiraReverse() {
         Juego j = new Juego(List.of(r2, reversaRojo, r3, r4, r5, r6, r7, r8, r8, a7), 3,
                 "juan", "pedro", "luis");
-        j.jugarCarta(reversaRojo); //juega juan
+        j.jugarCarta(new CartaReverse(Color.ROJO)); //juega juan
         assertEquals("luis", j.nombreJugadorDelTurno());
     }
 
@@ -214,21 +214,21 @@ public class PartidaTest {
     @Test void testJugadorTiraSkipValidoYSaltaAlSiguiente() {
         Juego j = new Juego(List.of(r2, saltaRojo, r4, r5, r6, r7, r8, a2, a7, r5), 3,
                 "juan", "pedro", "luis");
-        j.jugarCarta(saltaRojo);
+        j.jugarCarta(new CartaSkip(Color.ROJO));
         assertEquals("luis", j.nombreJugadorDelTurno()); // salta a luis
     }
 
     @Test void testDosJugadoresTiranSkipSeguidosValidos() {
         Juego j = new Juego(List.of(r2, saltaRojo, r4, saltaAzul, r6, r7, r8, a2, a7, r5), 3,
                 "juan", "pedro", "luis");
-        j.jugarCarta(saltaRojo);
-        j.jugarCarta(saltaAzul);
+        j.jugarCarta(new CartaSkip(Color.ROJO));
+        j.jugarCarta(new CartaSkip(Color.AZUL));
         assertEquals("pedro", j.nombreJugadorDelTurno());
     }
 
     @Test void testJugadorTiraSkipNoValido() {
         Juego j = new Juego(List.of(r2, saltaAzul, r4, r5, r6, r7, r8), 1, "juan", "pedro");
-        assertThrows(Throwable.class, () -> j.jugarCarta(saltaAzul));
+        assertThrows(Throwable.class, () -> j.jugarCarta(new CartaSkip(Color.AZUL)));
     }
 
 
@@ -236,29 +236,33 @@ public class PartidaTest {
 
     @Test void testCartaInicialEnPozoEsWild() {
         Juego j = new Juego(List.of(comodin, r2, r3, r4, r5, r6), 1, "juan", "pedro");
-        assertEquals("WILD(NINGUNO)", j.tipoCartaPozo());
+        assertEquals("WILD", j.tipoCartaPozo());
+        assertEquals(Color.NINGUNO, j.colorPozo());
     }
 
     @Test void testJugadorEligeColorYTiraConWildInicial() {
         Juego j = new Juego(List.of(comodin, r2, r3, r4, r5, r6, r7, r8), 3, "juan", "pedro");
         j.asignarColorAComodin(Color.ROJO);
-        assertEquals("WILD(ROJO)", j.tipoCartaPozo());
-        j.jugarCarta(r2);
+        assertEquals("WILD", j.tipoCartaPozo());
+        assertEquals(Color.ROJO, j.colorPozo());
+        j.jugarCarta(new CartaNumero(Color.ROJO, 2));
         assertEquals(2, j.cartasJugador("juan"));
     }
 
     @Test void testJugadorEligeColorYTiraCartaErroneaConWildInicial() {
         Juego j = new Juego(List.of(comodin, r2, r3, a2, r5, r6), 2, "juan", "pedro");
         j.asignarColorAComodin(Color.ROJO);
-        assertEquals("WILD(ROJO)", j.tipoCartaPozo());
-        assertThrows(Throwable.class, () -> j.jugarCarta(a2));
+        assertEquals("WILD", j.tipoCartaPozo());
+        assertEquals(Color.ROJO, j.colorPozo());
+        assertThrows(Throwable.class, () -> j.jugarCarta(new CartaNumero(Color.AZUL, 2)));
     }
 
 
     @Test void testJugadorTiraWildYEligeColor() {
         Juego j = new Juego(List.of(r2, comodin,  r3, a2, r5, r6, r7, r8), 3, "juan", "pedro");
-        j.jugarCarta(comodin.asignarColor(Color.ROJO));
-        assertEquals("WILD(ROJO)", j.tipoCartaPozo());
+        j.jugarCarta(new CartaWild().asignarColor(Color.ROJO));
+        assertEquals("WILD", j.tipoCartaPozo());
+        assertEquals(Color.ROJO, j.colorPozo());
         assertEquals(2, j.cartasJugador("juan"));
     }
 
@@ -266,8 +270,9 @@ public class PartidaTest {
     @Test void testJugadorTiraWild4YEligeColor() {
         Juego j = new Juego(List.of(r2, comodin4,  r3, a2, r5, r6, r7, r8, a7, r7, r8), 3,
                 "juan", "pedro");
-        j.jugarCarta(comodin4.asignarColor(Color.ROJO));
-        assertEquals("WILD4(ROJO)", j.tipoCartaPozo());
+        j.jugarCarta(new CartaWildDraw4().asignarColor(Color.ROJO));
+        assertEquals("WILD4", j.tipoCartaPozo());
+        assertEquals(Color.ROJO, j.colorPozo());
         assertEquals(2, j.cartasJugador("juan"));
         assertEquals(7, j.cartasJugador("pedro"));  //3 iniciales + 4 por Carta wild4
     }
@@ -275,19 +280,19 @@ public class PartidaTest {
     //tests de cantar uno
     @Test void testJugadorCantaUnoCuandoTieneUnaCarta() {
         Juego j = new Juego(List.of(r2, r3, r4, r5, r6), 2, "juan", "pedro");
-        j.jugarCarta(r3.uno());
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3).uno());
         assertEquals(1, j.cartasJugador("juan"));
     }
 
     @Test void testJugadorNoCantaUnoCuandoTieneUnaCarta() {
         Juego j = new Juego(List.of(r2, r3, r4, r5, r6, r7, r8), 2, "juan", "pedro");
-        j.jugarCarta(r3);
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3));
         assertEquals(3, j.cartasJugador("juan"));
     }
 
     @Test void testJugadorCantaUnoCuandoTieneMasDeUnaCarta() {
         Juego j = new Juego(List.of(r2, r3, r4, r5, r6, r7, r8), 3, "juan", "pedro");
-        assertThrows(Throwable.class, () -> j.jugarCarta(r3.uno()));
+        assertThrows(Throwable.class, () -> j.jugarCarta(new CartaNumero(Color.ROJO, 3).uno()));
     }
 
 
@@ -295,9 +300,9 @@ public class PartidaTest {
 
     @Test void testJugadorGanaTrasJugarTodasSusCartas() {
         Juego j = new Juego(List.of(r2, r3, r4, r5, r6), 2, "juan", "pedro");
-        j.jugarCarta(r3.uno()); // juan
-        j.jugarCarta(r4.uno()); // pedro
-        j.jugarCarta(r5); // juan
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3).uno()); // juan
+        j.jugarCarta(new CartaNumero(Color.ROJO, 4).uno()); // pedro
+        j.jugarCarta(new CartaNumero(Color.ROJO, 5)); // juan
 
         assertEquals(1, j.cantidadJugadoresEnJuego());
         assertFalse(j.contieneJugador("juan"));
@@ -307,10 +312,10 @@ public class PartidaTest {
     @Test void testJugadorGanaYSeSalteaEnLaRonda() {
         Juego j = new Juego(List.of(r2, r3, r4, r5, r6, r7, r8), 2,
                 "juan", "pedro", "luis");
-        j.jugarCarta(r3.uno()); // juan
-        j.jugarCarta(r4.uno()); // pedro
-        j.jugarCarta(r5.uno()); // luis
-        j.jugarCarta(r6); // juan gana
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3).uno()); // juan
+        j.jugarCarta(new CartaNumero(Color.ROJO, 4).uno()); // pedro
+        j.jugarCarta(new CartaNumero(Color.ROJO, 5).uno()); // luis
+        j.jugarCarta(new CartaNumero(Color.ROJO, 6)); // juan gana
 
         assertEquals(2, j.cantidadJugadoresEnJuego());
         assertFalse(j.contieneJugador("juan"));
@@ -321,14 +326,14 @@ public class PartidaTest {
         Juego j = new Juego(List.of(r2, r3, r4, r5, r6, r7, a2, r8, a6, r6), 2,
                 "juan", "pedro", "luis", "carlos");
 
-        j.jugarCarta(r3.uno()); // juan
-        j.jugarCarta(r4.uno()); // pedro
-        j.jugarCarta(r5.uno()); // luis
-        j.jugarCarta(r6.uno()); // carlos
-        j.jugarCarta(r7); // juan (queda sin cartas)
+        j.jugarCarta(new CartaNumero(Color.ROJO, 3).uno()); // juan
+        j.jugarCarta(new CartaNumero(Color.ROJO, 4).uno()); // pedro
+        j.jugarCarta(new CartaNumero(Color.ROJO, 5).uno()); // luis
+        j.jugarCarta(new CartaNumero(Color.ROJO, 6).uno()); // carlos
+        j.jugarCarta(new CartaNumero(Color.ROJO, 7)); // juan (queda sin cartas)
         j.agarrarCartaMazo(); //pedro agarra carta porque no podía poner (tiene a2)
-        j.jugarCarta(r6.uno()); //pedro juega la que agarró
-        j.jugarCarta(r8); // luis (queda sin cartas)
+        j.jugarCarta(new CartaNumero(Color.ROJO, 6).uno()); //pedro juega la que agarró
+        j.jugarCarta(new CartaNumero(Color.ROJO, 8)); // luis (queda sin cartas)
 
         assertEquals(2, j.cantidadJugadoresEnJuego());
         assertFalse(j.contieneJugador("juan"));
