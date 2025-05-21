@@ -18,6 +18,7 @@ abstract class Carta {
     public Color color() {
         return color;
     }
+    public int numero() {throw new Error();}
 
     public Carta uno() {
         this.cantadoUno = true;

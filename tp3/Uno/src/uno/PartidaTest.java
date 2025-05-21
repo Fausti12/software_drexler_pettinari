@@ -170,20 +170,27 @@ public class PartidaTest {
 
 
     //tests sobre carta Reverse
-
+/*
     @Test void testCartaInicialEnPozoEsReverseYCambiaSentidoDeLaRonda() {
         Juego j = new Juego(mazoConReverse, 1, "juan", "pedro", "luis");
         assertEquals("ROJO Reverse", j.tipoCartaPozo());
         j.jugarCarta(r2); //juega juan
         assertEquals("luis", j.nombreJugadorDelTurno());
     }
-
+*/
     @Test void testJugadorTiraReverseYDireccionCambia() {
         Juego j = new Juego(mazoConReverseEnMedio, 3,
                 "juan", "pedro", "luis");
         j.jugarCarta(r3); //juega juan
         j.jugarCarta(reversaRojo); //juega pedro
         assertEquals("juan", j.nombreJugadorDelTurno());
+    }
+
+    @Test void testPrimerJugadorTiraReverse() {
+        Juego j = new Juego(List.of(r2, reversaRojo, r3, r4, r5, r6, r7, r8, r8, a7), 3,
+                "juan", "pedro", "luis");
+        j.jugarCarta(reversaRojo); //juega juan
+        assertEquals("luis", j.nombreJugadorDelTurno());
     }
 
     @Test void testJugadorTiraReverseInvalidoPorColor() {
@@ -259,7 +266,7 @@ public class PartidaTest {
     @Test void testJugadorTiraWild4YEligeColor() {
         Juego j = new Juego(List.of(r2, comodin4,  r3, a2, r5, r6, r7, r8, a7, r7, r8), 3,
                 "juan", "pedro");
-        j.jugarCarta(comodin4, Color.ROJO);
+        j.jugarCarta(comodin4.asignarColor(Color.ROJO));
         assertEquals("WILD4(ROJO)", j.tipoCartaPozo());
         assertEquals(2, j.cartasJugador("juan"));
         assertEquals(7, j.cartasJugador("pedro"));  //3 iniciales + 4 por Carta wild4

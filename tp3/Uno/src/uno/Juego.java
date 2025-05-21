@@ -43,9 +43,6 @@ public class Juego {
         if (!carta.puedeSerJugadoSobre(pozo))
             throw new IllegalArgumentException("Jugada inválida");
 
-        //if (carta instanceof CartaWild wild && wild.color() == Color.NINGUNO) //si jugador no eligió color luego de tirar comodin
-          //  throw new IllegalStateException("No se eligió color para el comodín");
-
         j.jugar(carta);
         pozo = carta;
         cartaRecienRobada = null;
@@ -55,7 +52,6 @@ public class Juego {
     }
 
     public void robar(int cantidadCartas) {
-        //if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
         for (int i = 0; i < cantidadCartas; i++) {
             chequearMazoQuedaVacio();
             jugadores.get(nombreJugadorDelTurno()).recibir(mazo.pop());
@@ -65,9 +61,7 @@ public class Juego {
     public void agarrarCartaMazo() {
         Jugador j = jugadores.get(nombreJugadorDelTurno());
         if (j.tieneCartaJugable(pozo)) throw new IllegalStateException("No puede agarrar carta si tiene una jugable");
-        //if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
         chequearMazoQuedaVacio();
-
         cartaRecienRobada = mazo.pop();
         j.recibir(cartaRecienRobada);
     }
@@ -104,10 +98,7 @@ public class Juego {
 
     public Color colorPozo() { return pozo.color();}
 
-    public int numPozo() {
-        if (pozo instanceof CartaNumero c) return c.numero();
-        throw new IllegalStateException("La carta del pozo no tiene número");
-    }
+    public int numPozo() { return pozo.numero(); }
 
     public String tipoCartaPozo() { return pozo.toString();}
 
