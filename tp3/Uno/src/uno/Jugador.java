@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Jugador {
-    private String nombre;
     private final List<Carta> mano = new ArrayList<>();
-    public Jugador(String nombre) {this.nombre = nombre;}
+    private String nombre;
+    private Jugador izquierda = null;
+    private Jugador derecha = null;
+
+    public Jugador(String nombre) {
+        this.nombre = nombre;
+    }
 
     public void recibir(Carta carta) { mano.add(carta); }
 
@@ -22,9 +27,29 @@ public class Jugador {
         return mano.stream().anyMatch(carta -> carta.puedeSerJugadoSobre(pozo));
     }
 
+    public void asignarIzquierda(Jugador player){
+        izquierda = player;
+    }
+    public void asignarDerecha(Jugador player){
+        derecha = player;
+    }
+
+    public Jugador getIzquierda() {
+        return izquierda;
+    }
+
+    public Jugador getDerecha() {
+        return derecha;
+    }
+
     public boolean tieneUnaCarta() { return mano.size() == 1; }
 
     public int cantidad() {
         return mano.size();
     }
+
+    public String getNombre() {
+        return nombre;
+    }
+
 }
