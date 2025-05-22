@@ -1,31 +1,55 @@
 package uno;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Jugador {
-    // borrado el atributo nombre de jugador
     private final List<Carta> mano = new ArrayList<>();
-    //private boolean cantoUno = false;
+    private String nombre;
+    private Jugador izquierda = null;
+    private Jugador derecha = null;
 
-    public void recibir(Carta carta) {
-        mano.add(carta);
+    public Jugador(String nombre) {
+        this.nombre = nombre;
     }
+
+    public void recibir(Carta carta) { mano.add(carta); }
 
     public void jugar(Carta carta) {
-        //System.out.println(nombre);
-        if (!mano.contains(carta)) throw new IllegalArgumentException("La carta no está en la mano");
-        mano.remove(carta);
-        //cantoUno = carta.fueCantadoUno();
+        Carta cartaDelMazo = mano.stream().filter(c -> c.toString().equals(carta.toString())).findFirst().orElse(null);
+        if ( cartaDelMazo == null ) {
+            throw new IllegalArgumentException("La carta no está en la mano");
+        }
+        mano.remove(cartaDelMazo);
     }
 
-    //public boolean tieneUnaCarta() {return mano.size() == 1;}
+    public boolean tieneCartaJugable(Carta pozo) {
+        return mano.stream().anyMatch(carta -> carta.puedeSerJugadoSobre(pozo));
+    }
 
-    //public boolean cantoUno() {return cantoUno;}
+    public void asignarIzquierda(Jugador player){
+        izquierda = player;
+    }
+    public void asignarDerecha(Jugador player){
+        derecha = player;
+    }
+
+    public Jugador getIzquierda() {
+        return izquierda;
+    }
+
+    public Jugador getDerecha() {
+        return derecha;
+    }
+
+    public boolean tieneUnaCarta() { return mano.size() == 1; }
 
     public int cantidad() {
         return mano.size();
     }
+
+    public String getNombre() {
+        return nombre;
+    }
+
 }
