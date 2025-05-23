@@ -129,9 +129,6 @@ class CartaWild extends Carta {
         super(Color.NINGUNO);
     }
 
-    //no tiene accion inicial
-
-
     public void accionSobre(Juego juego) {
         juego.avanzarTurno();
     }
