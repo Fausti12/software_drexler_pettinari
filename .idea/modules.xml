@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/software_drexler_pettinari.iml" filepath="$PROJECT_DIR$/software_drexler_pettinari.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/software_drexler_pettinari.iml" filepath="$PROJECT_DIR$/.idea/software_drexler_pettinari.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tp2/tp2.iml" filepath="$PROJECT_DIR$/tp2/tp2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tp3/tp3.iml" filepath="$PROJECT_DIR$/tp3/tp3.iml" />
     </modules>
   </component>
 </project>

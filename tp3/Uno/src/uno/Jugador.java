@@ -17,10 +17,11 @@ public class Jugador {
 
     public void jugar(Carta carta) {
         Carta cartaDelMazo = mano.stream().filter(c -> c.toString().equals(carta.toString())).findFirst().orElse(null);
-        if ( cartaDelMazo == null ) {
-            throw new IllegalArgumentException("La carta no está en la mano");
-        }
         mano.remove(cartaDelMazo);
+    }
+
+    public boolean tieneLaCarta(Carta carta) {
+        return mano.stream().anyMatch(c -> c.toString().equals(carta.toString()));
     }
 
     public boolean tieneCartaJugable(Carta pozo) {

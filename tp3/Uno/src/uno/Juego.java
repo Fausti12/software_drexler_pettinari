@@ -7,13 +7,12 @@ public class Juego {
     private Carta pozo;
     private final Deque<Carta> mazo;
     private Controlador controlador = new ControladorIzquierda(); // por default la ronda va hacia la izquierda
-    //private final List<String> orden = new ArrayList<>();  //tal vez no haga falta
     private Jugador jugadorActual;
-    private Carta cartaRecienRobada = null; //para que no juega carta diferente a la que agarra en ese turno
+    private boolean juegoFinalizado = false;
+
 
     public Juego(List<Carta> cartasIniciales, int cartasPorJugador, String... nombres) {
         inicializarJugadores(nombres);
-        //jugadorActual = jugadores.keySet().iterator().next(); // primer jugador
         pozo = cartasIniciales.get(0);
         mazo = new ArrayDeque<>(cartasIniciales.subList(1, cartasIniciales.size()));
         repartir(cartasPorJugador);
@@ -45,15 +44,11 @@ public class Juego {
     }
 
     public void jugarCarta(Carta carta) {
-
-        if (cartaRecienRobada != null && carta.toString() == cartaRecienRobada.toString())
-            throw new IllegalArgumentException("Solo se puede jugar la carta recién robada");
-
+        verificarJuegoNoFinalizado();
+        if (!jugadorActual.tieneLaCarta(carta))  throw new IllegalArgumentException("La carta no está en la mano");
         if (!carta.puedeSerJugadoSobre(pozo))  throw new IllegalArgumentException("Jugada inválida");
-
         jugadorActual.jugar(carta);
         pozo = carta;
-        cartaRecienRobada = null;
         chequearSiTieneUnaCartaYCantaUno();
         chequearSiGanoJugador();
         pozo.accionSobre(this);
@@ -67,10 +62,10 @@ public class Juego {
     }
 
     public void agarrarCartaMazo() {
+        verificarJuegoNoFinalizado();
         if (jugadorActual.tieneCartaJugable(pozo)) throw new IllegalStateException("No puede agarrar carta si tiene una jugable");
         chequearMazoQuedaVacio();
-        cartaRecienRobada = mazo.pop();
-        jugadorActual.recibir(cartaRecienRobada);
+        jugadorActual.recibir(mazo.pop());
     }
 
     public void avanzarTurno() {
@@ -90,7 +85,7 @@ public class Juego {
 
     private void chequearSiTieneUnaCartaYCantaUno() {
         if (jugadorActual.tieneUnaCarta() && !pozo.fueCantadoUno()) { robar(2); } //carta en pozo fue jugada por el actual
-        if (!jugadorActual.tieneUnaCarta() && pozo.fueCantadoUno()) { throw new Error(); } // Cantar en mal momento -> tirar fallo
+        if (!jugadorActual.tieneUnaCarta() && pozo.fueCantadoUno()) { robar(2); } // Cantar en mal momento -> tirar fallo
     }
 
     private void chequearSiGanoJugador() {
@@ -99,6 +94,11 @@ public class Juego {
             jugadorActual.getDerecha().asignarIzquierda(jugadorActual.getIzquierda()); // al jugador que tengo a la derecha, le asigno el jugador que tengo a MI izquierda como SU izquierda
             jugadorActual.getIzquierda().asignarDerecha(jugadorActual.getDerecha());   // lo mismo que antes, pero al revés
         }
+        if (jugadores.size() == 1) { juegoFinalizado = true; }
+    }
+
+    private void verificarJuegoNoFinalizado() {
+        if (juegoFinalizado) throw new IllegalStateException("El juego ya terminó");
     }
 
     public Color colorPozo() { return pozo.color();}
@@ -109,10 +109,7 @@ public class Juego {
 
     public int cartasJugador(String nombre) { return jugadores.get(nombre).cantidad();}
 
-    public String nombreJugadorDelTurno() {
-        return jugadorActual.getNombre();
-
-    }
+    public String nombreJugadorDelTurno() { return jugadorActual.getNombre(); }
 
     public int cantidadJugadoresEnJuego() { return jugadores.size();}
 
