@@ -161,13 +161,13 @@ public class PartidaTest {
         //IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
          //       () -> j.agarrarCartaMazo());
         //assertEquals("No puede agarrar carta si tiene una jugable", e.getMessage());
-        assertThrows(Throwable.class, () -> j.agarrarCartaMazo());
+        assertThrows(IllegalStateException.class, j::agarrarCartaMazo, Juego.noMoreCards);
     }
 
     @Test void testJugadorRobaCartaYTiraCartaNoValida() {
         Juego j = new Juego(mazoRobarYJugarNoValida, 2, "juan", "pedro");
         j.agarrarCartaMazo();
-        assertThrows(Throwable.class, () -> j.jugarCarta(a7));
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(new CartaNumero(Color.AZUL, 7)), Juego.invalidPlay);
     }
 
 
@@ -194,7 +194,7 @@ public class PartidaTest {
 
     @Test void testJugadorTiraDraw2NoValido() {
         Juego j = new Juego(mazoConDraw2NoJugableConPozoInicial, 1, "juan", "pedro");
-        assertThrows(Throwable.class, () -> j.jugarCarta(tomaDosAzul));
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(tomaDosAzul), Juego.cardNotInHand);
     }
 
 
@@ -224,7 +224,7 @@ public class PartidaTest {
 
     @Test void testJugadorTiraReverseInvalidoPorColor() {
         Juego j = new Juego(mazoConReverseNoJugable, 2, "juan", "pedro");
-        assertThrows(Throwable.class, () -> j.jugarCarta(reversaAzul));
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(new CartaReverse(Color.AZUL)), Juego.invalidPlay);
     }
 
 
@@ -255,7 +255,7 @@ public class PartidaTest {
 
     @Test void testJugadorTiraSkipNoValido() {
         Juego j = new Juego(mazoConSkipNoJugable, 1, "juan", "pedro");
-        assertThrows(Throwable.class, () -> j.jugarCarta(new CartaSkip(Color.AZUL)));
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(new CartaSkip(Color.AZUL)), Juego.invalidPlay);
     }
 
 
@@ -282,7 +282,7 @@ public class PartidaTest {
         j.asignarColorAComodin(Color.ROJO);
         assertEquals("WILD", j.tipoCartaPozo());
         assertEquals(Color.ROJO, j.colorPozo());
-        assertThrows(Throwable.class, () -> j.jugarCarta(new CartaNumero(Color.AZUL, 2)));
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(new CartaNumero(Color.AZUL, 2)), Juego.invalidPlay);
     }
 
 
@@ -377,7 +377,7 @@ public class PartidaTest {
         j.jugarCarta(new CartaNumero(Color.ROJO, 4).uno());  //juega pedro
         j.jugarCarta(new CartaNumero(Color.ROJO, 5));  //juega juan
         assertEquals("pedro", j.nombreJugadorDelTurno());
-        assertThrows(Throwable.class, () -> j.jugarCarta(r7));
+        assertThrows(IllegalStateException.class, () -> j.jugarCarta(new CartaNumero(Color.ROJO, 7)), Juego.finishedGame);
     }
 
     //tests de fin del juego
@@ -389,7 +389,7 @@ public class PartidaTest {
         j.jugarCarta(new CartaNumero(Color.ROJO, 6)); //gana juan
         j.jugarCarta(new CartaNumero(Color.ROJO, 7)); //gana pedro
         assertEquals("luis", j.nombreJugadorDelTurno());
-        assertThrows(Throwable.class, () -> j.jugarCarta(r8));
+        assertThrows(IllegalStateException.class, () -> j.jugarCarta(new CartaNumero(Color.ROJO, 8)), Juego.finishedGame);
     }
 
 }

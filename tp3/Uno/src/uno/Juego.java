@@ -10,6 +10,12 @@ public class Juego {
     private Jugador jugadorActual;
     private boolean juegoFinalizado = false;
 
+    // mensajes de error
+    public static String cardNotInHand = "La carta no está en la mano";
+    public static String invalidPlay = "Jugada inválida";
+    public static String useYourPayableCard = "No puede agarrar carta si tiene una jugable";
+    public static String noMoreCards = "No hay más cartas";
+    public static String finishedGame = "Juego finalizado";
 
     public Juego(List<Carta> cartasIniciales, int cartasPorJugador, String... nombres) {
         inicializarJugadores(nombres);
@@ -19,6 +25,7 @@ public class Juego {
         pozo.accionInicial(this);
     }
 
+/*
     private void inicializarJugadores(String... nombres) {
         Jugador firstPlayer = new Jugador(nombres[0]);
         jugadorActual = firstPlayer;
@@ -34,19 +41,44 @@ public class Juego {
         jugadores.get(nombres[nombres.length-1]).asignarIzquierda(jugadores.get(nombres[0]));
     }
 
-    private void repartir(int cartasPorJugador) {
-        for (int i = 0; i < cartasPorJugador; i++) {
-            for (Jugador j : jugadores.values()) {
-                chequearMazoQuedaVacio();
-                j.recibir(mazo.pop());
-            }
+*/
+    private void inicializarJugadores(String... nombres) {
+        crearJugadores(nombres);
+        enlazarJugadoresCircularmente(nombres);
+        jugadorActual = jugadores.get(nombres[0]);
+    }
+
+    private void crearJugadores(String[] nombres) {
+        Arrays.stream(nombres).forEach(nombre -> jugadores.put(nombre, new Jugador(nombre)));
+    }
+
+    private void enlazarJugadoresCircularmente(String[] nombres) {
+        for (int i = 0; i < nombres.length; i++) {
+            Jugador actual = jugadores.get(nombres[i]);
+            Jugador izquierda = jugadores.get(nombres[(i + 1) % nombres.length]);                // A la izquierda está el jugador siguiente
+            Jugador derecha = jugadores.get(nombres[(i - 1 + nombres.length) % nombres.length]); // A la derecha está el jugador anterior
+            actual.asignarIzquierda(izquierda);
+            actual.asignarDerecha(derecha);
         }
     }
 
+
+
+
+    private void repartir(int cartasPorJugador) {
+        for (int i = 0; i < cartasPorJugador; i++) {
+            jugadores.values().forEach(j -> {
+                chequearMazoQuedaVacio();
+                j.recibir(mazo.pop());
+            });
+        }
+    }
+
+
     public void jugarCarta(Carta carta) {
         verificarJuegoNoFinalizado();
-        if (!jugadorActual.tieneLaCarta(carta))  throw new IllegalArgumentException("La carta no está en la mano");
-        if (!carta.puedeSerJugadoSobre(pozo))  throw new IllegalArgumentException("Jugada inválida");
+        if (!jugadorActual.tieneLaCarta(carta))  throw new IllegalArgumentException(cardNotInHand);
+        if (!carta.puedeSerJugadoSobre(pozo))  throw new IllegalArgumentException(invalidPlay);
         jugadorActual.jugar(carta);
         pozo = carta;
         chequearSiTieneUnaCartaYCantaUno();
@@ -63,7 +95,7 @@ public class Juego {
 
     public void agarrarCartaMazo() {
         verificarJuegoNoFinalizado();
-        if (jugadorActual.tieneCartaJugable(pozo)) throw new IllegalStateException("No puede agarrar carta si tiene una jugable");
+        if (jugadorActual.tieneCartaJugable(pozo)) throw new IllegalStateException(useYourPayableCard);
         chequearMazoQuedaVacio();
         jugadorActual.recibir(mazo.pop());
     }
@@ -80,12 +112,13 @@ public class Juego {
     }
 
     private void chequearMazoQuedaVacio(){
-        if (mazo.isEmpty()) throw new IllegalStateException("No hay más cartas");
+        if (mazo.isEmpty()) throw new IllegalStateException(noMoreCards);
     }
 
     private void chequearSiTieneUnaCartaYCantaUno() {
-        if (jugadorActual.tieneUnaCarta() && !pozo.fueCantadoUno()) { robar(2); } //carta en pozo fue jugada por el actual
-        if (!jugadorActual.tieneUnaCarta() && pozo.fueCantadoUno()) { robar(2); } // Cantar en mal momento -> tirar fallo
+        // if (jugadorActual.tieneUnaCarta() && !pozo.fueCantadoUno()) { robar(2); } //carta en pozo fue jugada por el actual
+        // if (!jugadorActual.tieneUnaCarta() && pozo.fueCantadoUno()) { robar(2); } // Cantar en mal momento -> tirar fallo
+        if (jugadorActual.tieneUnaCarta() ^ pozo.fueCantadoUno()) { robar(2); }
     }
 
     private void chequearSiGanoJugador() {
@@ -98,7 +131,7 @@ public class Juego {
     }
 
     private void verificarJuegoNoFinalizado() {
-        if (juegoFinalizado) throw new IllegalStateException("El juego ya terminó");
+        if (juegoFinalizado) throw new IllegalStateException(finishedGame);
     }
 
     public Color colorPozo() { return pozo.color();}
