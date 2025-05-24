@@ -45,6 +45,7 @@ public class Juego {
 
     public void jugarCarta(Carta carta) {
         verificarJuegoNoFinalizado();
+        if (!jugadorActual.tieneLaCarta(carta))  throw new IllegalArgumentException("La carta no está en la mano");
         if (!carta.puedeSerJugadoSobre(pozo))  throw new IllegalArgumentException("Jugada inválida");
         jugadorActual.jugar(carta);
         pozo = carta;

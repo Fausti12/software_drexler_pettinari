@@ -109,12 +109,16 @@ public class PartidaTest {
 
     @Test void testJugadorJuegaCartaNoPosible() {
         Juego j = new Juego(mazoBasico2, 1, "juan", "pedro");
-        assertThrows(Throwable.class, () -> j.jugarCarta(a7));
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> j.jugarCarta(new CartaNumero(Color.AZUL, 7)));
+        assertEquals("Jugada inválida", e.getMessage());
     }
 
     @Test void testJugadorJuegaCartaQueNoTiene() {
         Juego j = new Juego(mazoBasicoRojo, 2, "juan", "pedro");
-        assertThrows(Throwable.class, () -> j.jugarCarta(a7));
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> j.jugarCarta(new CartaNumero(Color.AZUL, 2)));
+        assertEquals("La carta no está en la mano", e.getMessage());
     }
 
     @Test void testJugadorJuegaCartaQueYaTiro() {
@@ -122,7 +126,9 @@ public class PartidaTest {
         j.jugarCarta(new CartaNumero(Color.ROJO, 3));
         assertEquals("pedro", j.nombreJugadorDelTurno());
         j.jugarCarta(new CartaNumero(Color.ROJO, 4));
-        assertThrows(Throwable.class, () -> j.jugarCarta(new CartaNumero(Color.ROJO, 3)));
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> j.jugarCarta(new CartaNumero(Color.ROJO, 3)));
+        assertEquals("La carta no está en la mano", e.getMessage());
     }
 
     @Test void testJugadorJuegaLasDosCartasRepetidas() {
@@ -152,6 +158,9 @@ public class PartidaTest {
 
     @Test void testJugadorRobaCartaCuandoPodiaTirar() {
         Juego j = new Juego(mazoRobarSinPoder, 1, "juan", "pedro");
+        //IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+         //       () -> j.agarrarCartaMazo());
+        //assertEquals("No puede agarrar carta si tiene una jugable", e.getMessage());
         assertThrows(Throwable.class, () -> j.agarrarCartaMazo());
     }
 
