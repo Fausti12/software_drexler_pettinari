@@ -194,7 +194,7 @@ public class PartidaTest {
 
     @Test void testJugadorTiraDraw2NoValido() {
         Juego j = new Juego(mazoConDraw2NoJugableConPozoInicial, 1, "juan", "pedro");
-        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(tomaDosAzul), Juego.cardNotInHand);
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(tomaDosAzul), Juego.invalidPlay);
     }
 
 
