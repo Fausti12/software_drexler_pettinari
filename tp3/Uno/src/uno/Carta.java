@@ -59,7 +59,6 @@ class CartaNumero extends Carta {
 
     public boolean puedeSerJugadoSobre(Carta otra) {
         return otra.teGustaColor(this.color) || otra.teGustaNumero(this.numero) ;
-        //si otra carta no tiene numero devuelve false en 2do término (default clase)
     }
 
     public void accionSobre(Juego juego) {
@@ -92,9 +91,7 @@ class CartaDraw2 extends Carta {
 class CartaReverse extends Carta {
     public CartaReverse(Color color) {super(color);}
 
-    public void accionInicial(Juego juego) {
-        juego.cambiarDireccion();
-    }
+    //accion inicial no implementado
 
     public void accionSobre(Juego juego) {
         juego.cambiarDireccion();
@@ -135,16 +132,10 @@ class CartaWild extends Carta {
 
     public boolean puedeSerJugadoSobre(Carta carta) { return true;}
 
-    public boolean teGustaColor(Color color) {
-        return color == this.color;
-    }
-
     public Carta asignarColor(Color color) {
         this.color = color;
         return this;
     }
-
-    public Color color() {return this.color;}
 
     public String toString() { return "WILD";}
 }
@@ -163,16 +154,11 @@ class CartaWildDraw4 extends Carta {
 
     public boolean puedeSerJugadoSobre(Carta carta) { return true;}
 
-    public boolean teGustaColor(Color color) {
-        return color == this.color;
-    }
 
     public Carta asignarColor(Color color) {
         this.color = color;
         return this;
     }
-
-    public Color color() {return this.color;}
 
     public String toString() { return "WILD4";}
 }

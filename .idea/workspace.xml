@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="44f5a6fe-98e0-4031-9646-1480bf1693aa" name="Changes" comment="" />
+    <list default="true" id="44f5a6fe-98e0-4031-9646-1480bf1693aa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/tp3/uno/Juego.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/tp3/uno/Juego.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/tp3/uno/PartidaTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/tp3/uno/PartidaTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tp3/Uno/src/uno/Carta.java" beforeDir="false" afterPath="$PROJECT_DIR$/tp3/Uno/src/uno/Carta.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tp3/Uno/src/uno/PartidaTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tp3/Uno/src/uno/PartidaTest.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,9 +19,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2wpBbp5vlYKbrH8aMr10NsNnMBm" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -20,15 +29,93 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JUnit.PartidaTest.executor": "Run",
+    "JUnit.PartidaTest.testJugadorJuegaCartaNoPosible.executor": "Run",
+    "JUnit.PartidaTest.testJugadorJuegaCartaQueNoTiene.executor": "Run",
+    "JUnit.PartidaTest.testJugadorJuegaCartaQueYaTiro.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "faus",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/bryan/Documentos/GitHub/software_drexler_pettinari",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager" selected="JUnit.PartidaTest">
+    <configuration name="PartidaTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="tp3" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="uno.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="uno" />
+      <option name="MAIN_CLASS_NAME" value="uno.PartidaTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PartidaTest.testJugadorJuegaCartaNoPosible" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="tp3" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="uno.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="uno" />
+      <option name="MAIN_CLASS_NAME" value="uno.PartidaTest" />
+      <option name="METHOD_NAME" value="testJugadorJuegaCartaNoPosible" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PartidaTest.testJugadorJuegaCartaQueNoTiene" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="tp3" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="uno.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="uno" />
+      <option name="MAIN_CLASS_NAME" value="uno.PartidaTest" />
+      <option name="METHOD_NAME" value="testJugadorJuegaCartaQueNoTiene" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PartidaTest.testJugadorJuegaCartaQueYaTiro" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="tp3" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="uno.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="uno" />
+      <option name="MAIN_CLASS_NAME" value="uno.PartidaTest" />
+      <option name="METHOD_NAME" value="testJugadorJuegaCartaQueYaTiro" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.PartidaTest" />
+        <item itemvalue="JUnit.PartidaTest.testJugadorJuegaCartaNoPosible" />
+        <item itemvalue="JUnit.PartidaTest.testJugadorJuegaCartaQueNoTiene" />
+        <item itemvalue="JUnit.PartidaTest.testJugadorJuegaCartaQueYaTiro" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

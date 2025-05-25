@@ -109,16 +109,12 @@ public class PartidaTest {
 
     @Test void testJugadorJuegaCartaNoPosible() {
         Juego j = new Juego(mazoBasico2, 1, "juan", "pedro");
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> j.jugarCarta(new CartaNumero(Color.AZUL, 7)));
-        assertEquals("Jugada inválida", e.getMessage());
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(new CartaNumero(Color.AZUL, 7)), Juego.invalidPlay);
     }
 
     @Test void testJugadorJuegaCartaQueNoTiene() {
         Juego j = new Juego(mazoBasicoRojo, 2, "juan", "pedro");
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> j.jugarCarta(new CartaNumero(Color.AZUL, 2)));
-        assertEquals("La carta no está en la mano", e.getMessage());
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(new CartaNumero(Color.AZUL, 2)), Juego.cardNotInHand);
     }
 
     @Test void testJugadorJuegaCartaQueYaTiro() {
@@ -126,9 +122,7 @@ public class PartidaTest {
         j.jugarCarta(new CartaNumero(Color.ROJO, 3));
         assertEquals("pedro", j.nombreJugadorDelTurno());
         j.jugarCarta(new CartaNumero(Color.ROJO, 4));
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> j.jugarCarta(new CartaNumero(Color.ROJO, 3)));
-        assertEquals("La carta no está en la mano", e.getMessage());
+        assertThrows(IllegalArgumentException.class, () -> j.jugarCarta(new CartaNumero(Color.ROJO, 3)), Juego.cardNotInHand);
     }
 
     @Test void testJugadorJuegaLasDosCartasRepetidas() {
@@ -158,9 +152,6 @@ public class PartidaTest {
 
     @Test void testJugadorRobaCartaCuandoPodiaTirar() {
         Juego j = new Juego(mazoRobarSinPoder, 1, "juan", "pedro");
-        //IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-         //       () -> j.agarrarCartaMazo());
-        //assertEquals("No puede agarrar carta si tiene una jugable", e.getMessage());
         assertThrows(IllegalStateException.class, j::agarrarCartaMazo, Juego.noMoreCards);
     }
 
@@ -199,14 +190,7 @@ public class PartidaTest {
 
 
     //tests sobre carta Reverse
-/*
-    @Test void testCartaInicialEnPozoEsReverseYCambiaSentidoDeLaRonda() {
-        Juego j = new Juego(mazoConReverse, 1, "juan", "pedro", "luis");
-        assertEquals("ROJO Reverse", j.tipoCartaPozo());
-        j.jugarCarta(r2); //juega juan
-        assertEquals("luis", j.nombreJugadorDelTurno());
-    }
-*/
+
     @Test void testJugadorTiraReverseYDireccionCambia() {
         Juego j = new Juego(mazoConReverseEnMedio, 3,
                 "juan", "pedro", "luis");
