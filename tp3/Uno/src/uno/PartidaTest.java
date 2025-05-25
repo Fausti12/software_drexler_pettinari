@@ -278,7 +278,7 @@ public class PartidaTest {
         assertEquals(2, j.cartasJugador("juan"));
     }
 
-    //tests de carta Comodin toma cuatro  (en instrucciones dice que puede haber un wild4 en Pozo inicial)
+    //tests de carta Comodin toma cuatro
     @Test void testJugadorTiraWild4YEligeColor() {
         Juego j = new Juego(mazoConSegundaCartaComodin4, 3,
                 "juan", "pedro");
@@ -354,6 +354,7 @@ public class PartidaTest {
         assertEquals("carlos", j.nombreJugadorDelTurno());
     }
 
+    //tests de fin del juego
 
     @Test void testPartidaFinalizadaCon2Jugadores() {
         Juego j = new Juego(mazoBasicoRojo, 2, "juan", "pedro");
@@ -364,7 +365,7 @@ public class PartidaTest {
         assertThrows(IllegalStateException.class, () -> j.jugarCarta(new CartaNumero(Color.ROJO, 7)), Juego.finishedGame);
     }
 
-    //tests de fin del juego
+
     @Test void testPartidaFinalizadaCon3Jugadores() {
         Juego j = new Juego(mazoBasicoRojo, 2, "juan", "pedro", "luis");
         j.jugarCarta(new CartaNumero(Color.ROJO, 3).uno());

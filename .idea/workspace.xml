@@ -5,10 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="44f5a6fe-98e0-4031-9646-1480bf1693aa" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/tp3/uno/Juego.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/tp3/uno/Juego.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/tp3/uno/PartidaTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/tp3/uno/PartidaTest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tp3/Uno/src/uno/Carta.java" beforeDir="false" afterPath="$PROJECT_DIR$/tp3/Uno/src/uno/Carta.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tp3/Uno/src/uno/PartidaTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tp3/Uno/src/uno/PartidaTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -38,6 +34,8 @@
     "git-widget-placeholder": "faus",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/bryan/Documentos/GitHub/software_drexler_pettinari",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
@@ -133,6 +131,7 @@
       <option name="presentableId" value="Default" />
       <updated>1746728709377</updated>
       <workItem from="1746728710630" duration="66000" />
+      <workItem from="1748213110125" duration="714000" />
     </task>
     <servers />
   </component>
