@@ -25,23 +25,6 @@ public class Juego {
         pozo.accionInicial(this);
     }
 
-/*
-    private void inicializarJugadores(String... nombres) {
-        Jugador firstPlayer = new Jugador(nombres[0]);
-        jugadorActual = firstPlayer;
-        jugadores.put(nombres[0], firstPlayer);
-        for (int i = 1; i < nombres.length; i++) {
-            Jugador player = new Jugador(nombres[i]);
-            jugadores.put(nombres[i], player);
-            // La ronda comienza yendo a la izquierda
-            player.asignarDerecha(jugadores.get(nombres[i-1]));    // A la derecha está el jugador anterior
-            jugadores.get(nombres[i-1]).asignarIzquierda(player);  // Me pongo a la izquierda del jugador anterior
-        }
-        jugadores.get(nombres[0]).asignarDerecha(jugadores.get(nombres[nombres.length-1]));
-        jugadores.get(nombres[nombres.length-1]).asignarIzquierda(jugadores.get(nombres[0]));
-    }
-
-*/
     private void inicializarJugadores(String... nombres) {
         crearJugadores(nombres);
         enlazarJugadoresCircularmente(nombres);
@@ -61,8 +44,6 @@ public class Juego {
             actual.asignarDerecha(derecha);
         }
     }
-
-
 
 
     private void repartir(int cartasPorJugador) {

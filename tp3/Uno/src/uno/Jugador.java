@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Jugador {
     private final List<Carta> mano = new ArrayList<>();
-    private String nombre;
+    private final String nombre;
     private Jugador izquierda = null;
     private Jugador derecha = null;
 
