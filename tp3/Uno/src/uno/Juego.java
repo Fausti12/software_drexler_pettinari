@@ -97,8 +97,6 @@ public class Juego {
     }
 
     private void chequearSiTieneUnaCartaYCantaUno() {
-        // if (jugadorActual.tieneUnaCarta() && !pozo.fueCantadoUno()) { robar(2); } //carta en pozo fue jugada por el actual
-        // if (!jugadorActual.tieneUnaCarta() && pozo.fueCantadoUno()) { robar(2); } // Cantar en mal momento -> tirar fallo
         if (jugadorActual.tieneUnaCarta() ^ pozo.fueCantadoUno()) { robar(2); }
     }
 
