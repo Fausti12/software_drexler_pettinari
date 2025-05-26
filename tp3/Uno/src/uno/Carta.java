@@ -1,11 +1,8 @@
 package uno;
 
-import java.util.function.Function;
-
 enum Color {
     ROJO, AZUL, VERDE, AMARILLO, NINGUNO;
 }
-
 
 abstract class Carta {
     protected Color color;
@@ -92,6 +89,7 @@ class CartaReverse extends Carta {
     public CartaReverse(Color color) {super(color);}
 
     //accion inicial no implementada
+    public void accionInicial(Juego juego) { juego.cambiarDireccion(); }
 
     public void accionSobre(Juego juego) {
         juego.cambiarDireccion();

@@ -12,7 +12,7 @@ public class PartidaTest {
 
     private List<Carta> mazoBasicoRojo, mazoBasico2, mazoBasico3, mazoRepetidas, mazoRobarYJugar,
     mazoRobarHastaPoderTirar, mazoRobarSinPoder, mazoRobarYJugarNoValida,  mazoConDraw2Inicial,
-    mazoConDraw2ParaJugador1, mazoConDraw2NoJugableConPozoInicial, mazoConSegundaCartaReverse, mazoConReverseEnMedio,
+    mazoConDraw2ParaJugador1, mazoConDraw2NoJugableConPozoInicial, mazoConReverseInicial, mazoConSegundaCartaReverse, mazoConReverseEnMedio,
     mazoConReverseNoJugable, mazoConSkipInicial, mazoConSegundaCartaSkip, mazoConDosSkips, mazoConSkipNoJugable,
     mazoConComodinInicial, mazoConComodinInicialYJugadorJuega, mazoConComodinInicialYJugadorTiraCartaNoValida,
     mazoConSegundaCartaComodin, mazoConSegundaCartaComodin4, mazoJugadorGana, mazoJugadorGanaYSeSaltea,
@@ -51,6 +51,7 @@ public class PartidaTest {
         mazoConDraw2ParaJugador1 = List.of(a7, tomaDosAzul, r4, r5, r6, r7, r8);
         mazoConDraw2NoJugableConPozoInicial = List.of(r2, tomaDosAzul, r4, r5, r6, r7, r8);
 
+        mazoConReverseInicial = List.of(reversaRojo, r2, r3, r4, r5, r6, r5, r8, r6, r7);
         mazoConSegundaCartaReverse = List.of(r2, reversaRojo, r3, r4, r5, r6, r7, r8, a2, a7);
         mazoConReverseEnMedio = List.of(r2, r3, reversaRojo, r4, r5, r6, r7, r8, r8, a7);
         mazoConReverseNoJugable = List.of(r2, reversaAzul, r3, r4, r5, r6);
@@ -191,6 +192,13 @@ public class PartidaTest {
 
     //tests sobre carta Reverse
 
+    @Test void testCartaInicialEnPozoEsReverse() {
+        Juego j = new Juego(mazoConReverseInicial, 3,
+                "juan", "pedro", "luis");
+        j.jugarCarta(new CartaNumero(Color.ROJO, 2)); //juega juan
+        assertEquals("luis", j.nombreJugadorDelTurno());
+    }
+
     @Test void testJugadorTiraReverseYDireccionCambia() {
         Juego j = new Juego(mazoConReverseEnMedio, 3,
                 "juan", "pedro", "luis");
@@ -198,6 +206,7 @@ public class PartidaTest {
         j.jugarCarta(new CartaReverse(Color.ROJO)); // juega pedro
         assertEquals("juan", j.nombreJugadorDelTurno());
     }
+
 
     @Test void testPrimerJugadorTiraReverse() {
         Juego j = new Juego(mazoConSegundaCartaReverse, 3,
