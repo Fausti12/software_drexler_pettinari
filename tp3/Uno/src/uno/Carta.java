@@ -24,7 +24,7 @@ abstract class Carta {
 
     public boolean fueCantadoUno() { return cantadoUno; }
 
-    public void accionInicial(Juego juego){} ;
+    public void accionInicial(Juego juego){} ; //en default no se hace nada
     public abstract void accionSobre(Juego juego);
     public boolean puedeSerJugadoSobre(Carta otra) { //default: skip, reverse, draw2
         return otra.teGustaColor(this.color) || otra.teGustaMiTipo(this.getClass());
@@ -88,7 +88,6 @@ class CartaDraw2 extends Carta {
 class CartaReverse extends Carta {
     public CartaReverse(Color color) {super(color);}
 
-    //accion inicial no implementada
     public void accionInicial(Juego juego) { juego.cambiarDireccion(); }
 
     public void accionSobre(Juego juego) {
