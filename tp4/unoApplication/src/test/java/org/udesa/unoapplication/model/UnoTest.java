@@ -8,7 +8,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-public class UnoTest {
+public class
+UnoTest {
 
     static Card RedOn( int n ) { return new NumberCard( "Red", n ); }
     static Card BlueOn( int n ) { return new NumberCard( "Blue", n ); }

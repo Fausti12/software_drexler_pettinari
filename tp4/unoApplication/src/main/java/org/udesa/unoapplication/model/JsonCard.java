@@ -3,6 +3,7 @@ package org.udesa.unoapplication.model;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
+
 @Getter
 public class JsonCard {
     String color;
