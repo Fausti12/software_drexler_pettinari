@@ -14,6 +14,7 @@ import java.util.UUID;
 // gestiona entre mi app y puerto que diga
 @Controller  //biblioteca que uso
 public class UnoController {
+    /*
     @Autowired UnoService service;
 
     @PostMapping("newmatch")
@@ -46,4 +47,6 @@ public class UnoController {
                 service.handOfCurrentPlayer(matchId).stream().map(c -> c.asJson()).toList()
         );
     }
+
+     */
 }
