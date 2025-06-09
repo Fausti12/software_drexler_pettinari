@@ -17,18 +17,36 @@ import java.util.UUID;
 public class controller {
     @Autowired service unoService; //spring junta instancias que necesito
 
-    @GetMapping("/hola") //get=levantar algo
-    public ResponseEntity<String> holaMundo(){
-        return new ResponseEntity<>("respuesta a Hola Mundo", HttpStatus.OK);
-    }
 
     @PostMapping ("newmatch")
     public ResponseEntity newMatch(@RequestParam List<String> players){
-        //return ResponseEntity.ok(UUID.randomUUID()); //te crea uno y te manda lo que está dentrod de ok()
         return ResponseEntity.ok(unoService.newMatch(players));
     }
 
-    //copiar el playerHand de jorge
+    @GetMapping("playerhand/{matchId}")
+    public ResponseEntity playerHand( @PathVariable UUID matchId ){
+        return ResponseEntity.ok(
+                unoService.playerHand(matchId).stream().map(each -> each.asJson())
+        );
+    }
+
+    @PostMapping("draw/{matchId}/{player}")
+    public ResponseEntity drawCard( @PathVariable UUID matchId, @PathVariable String player ){
+        unoService.drawCard(matchId, player);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("activecard/{matchId}")
+    public ResponseEntity activeCard( @PathVariable UUID matchId ){
+        return ResponseEntity.ok(unoService.activeCard(matchId).asJson());
+    }
+
+    @PostMapping("play/{matchId}/{player}")
+    public ResponseEntity play(@PathVariable UUID matchId, @PathVariable String player,
+                               @RequestBody JsonCard card ){
+        unoService.play(matchId, player, card.asCard());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     //
 

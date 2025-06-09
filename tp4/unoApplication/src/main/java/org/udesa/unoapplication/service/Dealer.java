@@ -13,7 +13,6 @@ public class Dealer { //es un servicio para que haga una parte del Service
 
     public List<Card> fullDeck(){
         ArrayList<Card> deck = new ArrayList<>();
-        //generar cartas red, blue,.... -> mezclarlas
         deck.addAll(cardsOn("Red"));
         deck.addAll(cardsOn("Green"));
         deck.addAll(cardsOn("Blue"));
