@@ -30,11 +30,10 @@ public class controller {
         );
     }
 
-    @PostMapping("draw/{matchId}")
-    public ResponseEntity drawCard( @PathVariable UUID matchId,
-                                    @RequestParam String player ){
+    @PostMapping("draw/{matchId}/{player}")
+    public ResponseEntity drawCard( @PathVariable UUID matchId, @PathVariable String player ){
         unoService.drawCard(matchId, player);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("activecard/{matchId}")
@@ -46,7 +45,6 @@ public class controller {
     public ResponseEntity play(@PathVariable UUID matchId, @PathVariable String player,
                                @RequestBody JsonCard card ){
         unoService.play(matchId, player, card.asCard());
-        //return ResponseEntity.ok().build();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
