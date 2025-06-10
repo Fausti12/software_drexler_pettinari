@@ -17,6 +17,18 @@ import java.util.UUID;
 public class controller {
     @Autowired service unoService; //spring junta instancias que necesito
 
+    // Manejo de errores directamente acá
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegal(IllegalArgumentException exc) {
+        System.err.println("IllegalArgumentException: " + exc.getMessage()); // o usar logger
+        return ResponseEntity.badRequest().body("Error inesperado. Intente nuevamente.");
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntime(RuntimeException exc) {
+        System.err.println("RuntimeException: " + exc.getMessage()); // o usar logge
+        return ResponseEntity.badRequest().body("Error: " + exc.getMessage());
+    }
 
     @PostMapping ("newmatch")
     public ResponseEntity newMatch(@RequestParam List<String> players){
@@ -48,9 +60,7 @@ public class controller {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //
 
 
 
-
-    }
+}
