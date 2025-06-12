@@ -4,6 +4,7 @@ package org.udesa.unoapplication.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,12 @@ public class controller {
     public ResponseEntity<String> handleRuntime(RuntimeException exc) {
         System.err.println("RuntimeException: " + exc.getMessage()); // o usar logge
         return ResponseEntity.badRequest().body("Error: " + exc.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class) //para el Json
+    public ResponseEntity<String> handleUnreadable(HttpMessageNotReadableException e) {
+        return ResponseEntity.badRequest().body("Malformed or incomplete JSON: " +
+                e.getMostSpecificCause().getMessage());
     }
 
 
@@ -57,8 +64,11 @@ public class controller {
     @PostMapping("play/{matchId}/{player}")
     public ResponseEntity play(@PathVariable UUID matchId, @PathVariable String player,
                                @RequestBody JsonCard card ){
+
+
         unoService.play(matchId, player, card.asCard());
         return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
 }
