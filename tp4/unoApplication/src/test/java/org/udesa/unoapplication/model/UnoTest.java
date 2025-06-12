@@ -215,6 +215,16 @@ UnoTest {
         assertActiveCard( match, redDraw2 );
     }
 
+    //Tests agregados
+    @Test void testNumberOfPlayersInvalid(){
+        assertThrowsLike(Match.InvalidNumberOfPlayers, () -> Match.newReducedMatch( deck(), "Juan") );
+    }
+
+    @Test void testPlayersWithNoName(){
+        assertThrowsLike(Match.EmptyPlayersName, () -> Match.newReducedMatch( deck(), "Juan","") );
+    }
+
+
     private static void assertActiveCard( Match match, Card card) {
         assertActiveCard( match, card, card.color() );
     }
@@ -249,5 +259,6 @@ UnoTest {
                         yellow5, redSkip, blue4, red3, yellow2,
                         green1, red5  );
     }
+
 
 }

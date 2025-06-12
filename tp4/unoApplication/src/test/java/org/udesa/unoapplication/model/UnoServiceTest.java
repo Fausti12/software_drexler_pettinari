@@ -23,11 +23,11 @@ public class UnoServiceTest {
         matchId = unoService.newMatch(List.of("Miguel", "Jorge"));
     }
 
-    @Test public void newMatchTest() {
+    @Test public void testNewMatch() {
         assertNotNull(matchId);
     }
 
-    @Test public void actualPlayerHandIsAccessibleTest() {
+    @Test public void TestActualPlayerHandIsAccessible() {
         List<Card> hand = unoService.playerHand(matchId);
         assertFalse(hand.isEmpty());
     }
@@ -39,14 +39,14 @@ public class UnoServiceTest {
         assertEquals(before.size() + 1, after.size());
     }
 */
-    @Test public void canDrawCardTest() {
+    @Test public void TestCanDrawCard() {
         List<Card> before = unoService.playerHand(matchId);
         unoService.drawCard(matchId, "Miguel");
         List<Card> after = unoService.playerHand(matchId);
         assertEquals(before.size() + 1, after.size());
     }
 
-    @Test public void activeCardIsNotNullTest() {
+    @Test public void TestActiveCardIsNotNull() {
         Card active = unoService.activeCard(matchId);
         assertNotNull(active);
     }

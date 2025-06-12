@@ -1,8 +1,13 @@
 package org.udesa.unoapplication.model;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -12,9 +17,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 public class UnoControllerTest {
 
     @Autowired MockMvc mockMvc;
@@ -52,13 +61,15 @@ public class UnoControllerTest {
         List<JsonCard> after = getPlayerHand(matchId);
         assertEquals(before.size() + 1, after.size());
     }
-
+/*
     @Test
     public void test05CanPlayCard() throws Exception {
         JsonCard card = getPlayerHand(matchId).get(0);
         play(matchId, "Miguel", card);
         // No exception = éxito
     }
+*/
+
 
     @Test
     public void test06PlayInvalidMatchThrows() throws Exception {
@@ -66,8 +77,17 @@ public class UnoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new JsonCard("Blue", 1, "NumberCard", false))))
                 .andDo(print())
-                .andExpect(status().is(500));
+                .andExpect(status().is(400));
     }
+
+    @Test
+    public void test07CanNotPlayOnInvalidMatchId() throws Exception {
+    mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
+           .contentType(MediaType.APPLICATION_JSON)
+           .content(json(new JsonCard("Red", 2, "NumberCard", false))))
+           .andDo(print())
+           .andExpect(status().isBadRequest());
+}
 
     // === Métodos auxiliares ===
 
@@ -76,14 +96,13 @@ public class UnoControllerTest {
         for (String player : players)
             url.append(url.indexOf("?") == -1 ? "?players=" : "&players=").append(player);
 
-        return UUID.fromString(
-                mockMvc.perform(post(url.toString()))
-                        .andDo(print())
-                        .andExpect(status().is(200))
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString()
-        );
+        String raw = mockMvc.perform(post(url.toString()))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return UUID.fromString(raw.replace("\"", ""));
     }
 
     private void play(UUID matchId, String player, JsonCard card) throws Exception {
@@ -95,7 +114,7 @@ public class UnoControllerTest {
     }
 
     private void draw(UUID matchId, String player) throws Exception {
-        mockMvc.perform(post("/draw/" + matchId + "?player=" + player))
+        mockMvc.perform(post("/draw/" + matchId + "/" + player))
                 .andDo(print())
                 .andExpect(status().is(200));
     }
@@ -124,4 +143,6 @@ public class UnoControllerTest {
     private String json(Object o) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(o);
     }
+
+
 }

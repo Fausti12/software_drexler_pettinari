@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class Dealer { //es un servicio para que haga una parte del Service
+public class Dealer {
 
     public List<Card> fullDeck(){
         ArrayList<Card> deck = new ArrayList<>();

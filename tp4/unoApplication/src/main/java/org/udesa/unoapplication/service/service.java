@@ -16,7 +16,6 @@ public class service {
     @Autowired private Dealer dealer;
     private Map<UUID, Match> sessions = new HashMap<UUID, Match>();
 
-
     public UUID newMatch(List<String > players){
         UUID newKey = UUID.randomUUID();
         sessions.put(newKey, Match.fullMatch(dealer.fullDeck(), players));
