@@ -23,19 +23,26 @@ public class service {
     }
 
     public List<Card> playerHand(UUID matchId){
-        return sessions.get(matchId).playerHand();
+        return getMatch(matchId).playerHand();
     }
 
     public void play(UUID matchId, String player, Card card){
-        sessions.get(matchId).play(player, card);
+        getMatch(matchId).play(player, card);
     }
 
     public Card activeCard(UUID matchId){
-        return sessions.get(matchId).activeCard();
+        return getMatch(matchId).activeCard();
     }
 
     public void drawCard(UUID matchId, String player){
-        sessions.get(matchId).drawCard(player);
+        getMatch(matchId).drawCard(player);
+    }
+
+    private Match getMatch(UUID matchId) {
+        Match match = sessions.get(matchId);
+        if (match == null)
+            throw new IllegalArgumentException("Invalid match ID: " + matchId);
+        return match;
     }
 
 
