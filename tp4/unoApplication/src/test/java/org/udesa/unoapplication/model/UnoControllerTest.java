@@ -7,17 +7,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.udesa.unoapplication.service.UnoService;
+import org.udesa.unoapplication.controller.UnoController;
+import org.udesa.unoapplication.service.Dealer;
+import org.udesa.unoapplication.model.UnoServiceTest;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,87 +31,91 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UnoControllerTest {
+    @Autowired UnoController controller;
     @Autowired MockMvc mockMvc;
-    @Autowired UnoService unoService;
+    @MockBean Dealer dealer;
 
-    private UUID matchId;
 
     @BeforeEach
     public void setup() throws Exception {
-        matchId = newMatch("Miguel", "Jorge");
+        when(dealer.fullDeck()).thenReturn(UnoServiceTest.customDeckForTesting());
     }
 
-    @Test
-    public void test01CanCreateMatch() throws Exception {
-        UUID id = newMatch("Ana", "Luis");
+
+    @Test public void testCanCreateMatch() throws Exception {
+        String id = newMatch("Ana", "Luis");
         assertNotNull(id);
     }
 
-    @Test
-    public void test02CanGetActiveCard() throws Exception {
-        JsonCard card = getActiveCard(matchId);
+    @Test public void testCanGetActiveCard() throws Exception {
+        String id = newMatch("Miguel", "Jorge");
+        JsonCard card = getActiveCard(id);
         assertNotNull(card);
     }
 
-    @Test
-    public void test03CanGetPlayerHand() throws Exception {
-        List<JsonCard> hand = getPlayerHand(matchId);
+    @Test public void testCanGetPlayerHand() throws Exception {
+        String id = newMatch("Miguel", "Jorge");
+        List<JsonCard> hand = getPlayerHand(id);
         assertFalse(hand.isEmpty());
     }
 
-    @Test
-    public void test04CanDrawCard() throws Exception {
-        List<JsonCard> before = getPlayerHand(matchId);
-        draw(matchId, "Miguel");
-        List<JsonCard> after = getPlayerHand(matchId);
+    @Test public void testCanDrawCard() throws Exception {
+        String id = newMatch("Miguel", "Jorge");
+        List<JsonCard> before = getPlayerHand(id);
+        draw(id, "Miguel");
+        List<JsonCard> after = getPlayerHand(id);
         assertEquals(before.size() + 1, after.size());
     }
-/*
-    @Test
-    public void test05CanPlayCard() throws Exception {
-        JsonCard card = getPlayerHand(matchId).get(0);
-        play(matchId, "Miguel", card);
-        // No exception = éxito
-    }
-*/
 
-
-    @Test
-    public void test06PlayInvalidMatchThrows() throws Exception {
-        mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new JsonCard("Blue", 1, "NumberCard", false))))
-                .andDo(print())
-                .andExpect(status().is(400));
+    @Test public void testCanPlayValidCard() throws Exception {
+        String id = newMatch("Miguel", "Jorge");
+        JsonCard cardFirstPlayer = getPlayerHand(id).get(0);
+        play(id, "Miguel", cardFirstPlayer);
+        JsonCard cardSecondPlayer = getPlayerHand(id).get(0);
+        play(id, "Jorge", cardSecondPlayer);
+        assertEquals(6,  getPlayerHand(id).size());
     }
 
-    @Test public void test07CanNotPlayOnInvalidMatchId() throws Exception {
+
+    @Test public void testCanNotPlayOnInvalidMatchId() throws Exception {
     mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
            .contentType(MediaType.APPLICATION_JSON)
            .content(json(new JsonCard("Red", 2, "NumberCard", false))))
            .andDo(print())
            .andExpect(status().isBadRequest());
     }
-    
+
+    @Test public void testPlayerWrongTurn() throws Exception {
+        String id = newMatch("Miguel", "Jorge");
+        assertNotNull(id);
+        List<JsonCard> cards = getPlayerHand(id);
+
+        String resp = mockMvc.perform(post("/play/" + id + "/Jorge")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cards.getFirst().toString()))
+                .andDo(print())
+                .andExpect(status().is(400)).andReturn().getResponse().getContentAsString();
+
+        assertEquals("Illegal Argument:" + Player.NotPlayersTurn + "Jorge", resp);
+    }
 
 
-    // === Métodos auxiliares ===
 
-    private UUID newMatch(String... players) throws Exception {
+    private String newMatch(String... players) throws Exception {
         StringBuilder url = new StringBuilder("/newmatch");
         for (String player : players)
             url.append(url.indexOf("?") == -1 ? "?players=" : "&players=").append(player);
 
-        String raw = mockMvc.perform(post(url.toString()))
+        String content = mockMvc.perform(post(url.toString()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        return UUID.fromString(raw.replace("\"", ""));
+        return new ObjectMapper().readTree(content).asText();
     }
 
-    private void play(UUID matchId, String player, JsonCard card) throws Exception {
+    private void play(String matchId, String player, JsonCard card) throws Exception {
         mockMvc.perform(post("/play/" + matchId + "/" + player)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(card)))
@@ -115,13 +123,13 @@ public class UnoControllerTest {
                 .andExpect(status().is(200));
     }
 
-    private void draw(UUID matchId, String player) throws Exception {
+    private void draw(String matchId, String player) throws Exception {
         mockMvc.perform(post("/draw/" + matchId + "/" + player))
                 .andDo(print())
                 .andExpect(status().is(200));
     }
 
-    private JsonCard getActiveCard(UUID matchId) throws Exception {
+    private JsonCard getActiveCard(String matchId) throws Exception {
         String content = mockMvc.perform(get("/activecard/" + matchId))
                 .andDo(print())
                 .andExpect(status().is(200))
@@ -131,15 +139,14 @@ public class UnoControllerTest {
         return new ObjectMapper().readValue(content, JsonCard.class);
     }
 
-    private List<JsonCard> getPlayerHand(UUID matchId) throws Exception {
+    private List<JsonCard> getPlayerHand(String matchId) throws Exception {
         String content = mockMvc.perform(get("/playerhand/" + matchId))
                 .andDo(print())
                 .andExpect(status().is(200))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(content, new TypeReference<List<JsonCard>>() {});
+        return new ObjectMapper().readValue(content, new TypeReference<List<JsonCard>>() {});
     }
 
     private String json(Object o) throws JsonProcessingException {

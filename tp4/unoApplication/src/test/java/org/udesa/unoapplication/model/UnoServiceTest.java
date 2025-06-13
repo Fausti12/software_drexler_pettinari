@@ -23,8 +23,7 @@ public class UnoServiceTest {
 
     @BeforeEach
     public void setup() {
-        List<Card> fixedDeck = customDeckForTesting();
-        when(dealer.fullDeck()).thenReturn(fixedDeck);
+        when(dealer.fullDeck()).thenReturn(customDeckForTesting());
         matchId = unoService.newMatch(List.of("Miguel", "Jorge"));
     }
 
@@ -78,7 +77,7 @@ public class UnoServiceTest {
 
 
 
-    private List<Card> customDeckForTesting() {
+    public static List<Card> customDeckForTesting() {
         return List.of(
                 new NumberCard("Red", 3), //pozo inicial
                 new NumberCard("Red", 5),

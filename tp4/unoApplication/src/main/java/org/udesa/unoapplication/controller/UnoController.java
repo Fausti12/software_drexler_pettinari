@@ -22,13 +22,11 @@ public class UnoController {
     // Manejo de errores
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegal(IllegalArgumentException exc) {
-        System.err.println("IllegalArgumentException: " + exc.getMessage()); // o usar logger
         return ResponseEntity.badRequest().body("Illegal Argument:" + exc.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntime(RuntimeException exc) {
-        System.err.println("RuntimeException: " + exc.getMessage()); // o usar logge
         return ResponseEntity.badRequest().body("Error: " + exc.getMessage());
     }
 
@@ -54,7 +52,7 @@ public class UnoController {
     @PostMapping("draw/{matchId}/{player}")
     public ResponseEntity drawCard( @PathVariable UUID matchId, @PathVariable String player ){
         unoService.drawCard(matchId, player);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("activecard/{matchId}")
@@ -67,7 +65,7 @@ public class UnoController {
                                @RequestBody JsonCard card ){
 
         unoService.play(matchId, player, card.asCard());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
 
     }
 
