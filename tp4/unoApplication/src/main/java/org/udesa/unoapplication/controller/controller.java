@@ -62,13 +62,9 @@ public class controller {
     }
 
     @PostMapping("play/{matchId}/{player}")
-    public ResponseEntity play(@PathVariable UUID matchId, @PathVariable String player,
-                               @RequestBody JsonCard card ){
-
-
+    public ResponseEntity play(@PathVariable UUID matchId, @PathVariable String player, @RequestBody JsonCard card ){
         unoService.play(matchId, player, card.asCard());
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
 }
