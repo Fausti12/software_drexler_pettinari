@@ -10,12 +10,12 @@ import java.util.List;
 
 @Component
 public class Dealer {
-    private static final List<String> COLORS = List.of("Red", "Blue", "Green", "Yellow");
 
     public List<Card> fullDeck() {
         List<Card> deck = new ArrayList<>();
+        List<String> Colors = List.of("Red", "Blue", "Green", "Yellow");
 
-        COLORS.forEach(color -> {
+        Colors.forEach(color -> {
             deck.addAll(cardsForAColor(color));
         });
 

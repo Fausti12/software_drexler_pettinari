@@ -2,12 +2,12 @@ package org.udesa.unoapplication.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.udesa.unoapplication.service.Dealer;
 import org.udesa.unoapplication.service.UnoService;
-import org.udesa.unoapplication.service.service;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class UnoServiceTest {
-    @Autowired private service unoService; //dsp poner UnoService class
+    @Autowired private UnoService unoService; //dsp poner UnoService class
     @MockBean Dealer dealer;
     private UUID matchId;
 
@@ -28,26 +28,6 @@ public class UnoServiceTest {
         matchId = unoService.newMatch(List.of("Miguel", "Jorge"));
     }
 
-    private List<Card> customDeckForTesting() {
-        return List.of(
-                new NumberCard("Red", 3), //pozo inicial
-                new NumberCard("Red", 5),
-                new NumberCard("Green", 5),
-                new Draw2Card("Red"),
-                new SkipCard("Blue"),
-                new ReverseCard("Green"),
-                new WildCard(),
-                new NumberCard("Yellow", 7),
-                new NumberCard("Blue", 5),
-                new NumberCard("Red", 5),
-                new NumberCard("Blue", 4),
-                new NumberCard("Blue", 6),
-                new NumberCard("Green", 1),
-                new NumberCard("Green", 2),
-                new Draw2Card("Green"),
-                new NumberCard("Blue", 9)  //carta para agarrar
-        );
-    }
 
     @Test public void testNewMatch() {
         assertNotNull(matchId);
@@ -89,9 +69,35 @@ public class UnoServiceTest {
         UUID invalidId = UUID.randomUUID();
         Card card = unoService.playerHand(matchId).get(0);
         assertThrows(RuntimeException.class, () -> unoService.play(invalidId, "Miguel", card));
+        assertThrowsLike(() -> unoService.play(invalidId, "Miguel", card), unoService.invalidId);
+    }
+
+    private void assertThrowsLike(Executable executable, String message ) {
+        assertEquals( message, assertThrows( Exception.class, executable ).getMessage() );
     }
 
 
+
+    private List<Card> customDeckForTesting() {
+        return List.of(
+                new NumberCard("Red", 3), //pozo inicial
+                new NumberCard("Red", 5),
+                new NumberCard("Green", 5),
+                new Draw2Card("Red"),
+                new SkipCard("Blue"),
+                new ReverseCard("Green"),
+                new WildCard(),
+                new NumberCard("Yellow", 7),
+                new NumberCard("Blue", 5),
+                new NumberCard("Red", 5),
+                new NumberCard("Blue", 4),
+                new NumberCard("Blue", 6),
+                new NumberCard("Green", 1),
+                new NumberCard("Green", 2),
+                new Draw2Card("Green"),
+                new NumberCard("Blue", 9)  //carta para agarrar
+        );
+    }
 
 
 }

@@ -16,7 +16,7 @@ public class Player {
 
     public void assertTurnOf( String playerName ) {
         if ( !name.equals( playerName ) ) {
-            throw new RuntimeException( NotPlayersTurn + playerName );
+            throw new IllegalArgumentException( NotPlayersTurn + playerName );
         }
     }
 

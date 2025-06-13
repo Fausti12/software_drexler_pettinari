@@ -16,7 +16,9 @@ import org.udesa.unoapplication.service.UnoService;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -25,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UnoControllerTest {
-
     @Autowired MockMvc mockMvc;
     @Autowired UnoService unoService;
 
@@ -80,14 +81,15 @@ public class UnoControllerTest {
                 .andExpect(status().is(400));
     }
 
-    @Test
-    public void test07CanNotPlayOnInvalidMatchId() throws Exception {
+    @Test public void test07CanNotPlayOnInvalidMatchId() throws Exception {
     mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
            .contentType(MediaType.APPLICATION_JSON)
            .content(json(new JsonCard("Red", 2, "NumberCard", false))))
            .andDo(print())
            .andExpect(status().isBadRequest());
-}
+    }
+    
+
 
     // === Métodos auxiliares ===
 

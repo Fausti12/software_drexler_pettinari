@@ -53,11 +53,11 @@ public class Match {
         Player player = status.player();
 
         if (!player.hasCard(aCard)) {
-            throw new RuntimeException(NotACardInHand + playerName);
+            throw new IllegalArgumentException(NotACardInHand + playerName); //cambiado
         }
 
         if (!discardPileHead.acceptsOnTop(aCard)) {
-            throw new RuntimeException(CardDoNotMatch);
+            throw new IllegalArgumentException(CardDoNotMatch);
         }
 
         player.removeCard(aCard);
@@ -108,11 +108,11 @@ public class Match {
 
     private void checkValidPlayerList(List<String> players) {
         if (players.size() < 2) {
-            throw new RuntimeException(InvalidNumberOfPlayers);
+            throw new IllegalArgumentException(InvalidNumberOfPlayers);
         }
 
         if (players.stream().anyMatch(name -> name.trim().isEmpty())) {
-            throw new RuntimeException(EmptyPlayersName);
+            throw new IllegalArgumentException(EmptyPlayersName);
         }
 
     }

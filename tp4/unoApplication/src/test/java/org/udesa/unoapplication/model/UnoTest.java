@@ -224,6 +224,16 @@ UnoTest {
         assertThrowsLike(Match.EmptyPlayersName, () -> Match.newReducedMatch( deck(), "Juan","") );
     }
 
+    @Test void testInvalidColorInJsonCard() {
+        assertThrowsLike("Invalid color: Pink", () -> new JsonCard("Pink", 3, "NumberCard", false));
+    }
+
+    @Test void testCardWithInvalidNumber() {
+        assertThrowsLike("Invalid number: 15", () -> new JsonCard("Blue", 15, "NumberCard", false));
+    }
+
+
+
 
     private static void assertActiveCard( Match match, Card card) {
         assertActiveCard( match, card, card.color() );
