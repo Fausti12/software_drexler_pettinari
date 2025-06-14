@@ -100,9 +100,13 @@ public class UnoControllerTest {
     }
 */
     @Test
-    public void test05CannotCreateMatchWithDuplicateNames() throws Exception {
-        mockMvc.perform(post("/newmatch?players=Ana&players=Ana&players=Pepe"))
-                .andExpect(status().isBadRequest());
+    public void test05CannotCreateMatchWithDuplicateNames() throws Throwable {
+        String resp = mockMvc.perform(post("/newmatch?players=Ana&players=Ana"))
+                .andDo(print())
+                .andExpect(status().is(400))
+                .andReturn().getResponse().getContentAsString();
+
+        assertEquals("Error: " + Match.DuplicatePlayerNames, resp);
     }
 
     /* ESTE TEST ES IGUAL AL SIGUIENTE
@@ -186,6 +190,28 @@ public class UnoControllerTest {
     }
     */
 
+    // TEST DE JULIO =================================================================
+    @Test
+    void playingWrongTurnTest() throws Exception{
+        // crear nuevo juego
+        UUID uuid = newMatch("Emilio", "Julio");
+        assertNotNull(uuid);
+
+        // poner disponibles las cartas necesarias
+        List<JsonCard> cards = getPlayerHand(uuid);
+
+        // probar que devuelve el texto del error, sin tener la aplicación corriendo
+        String resp = mockMvc.perform(post("/play/" + uuid + "/Julio")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(cards.getFirst().toString()))
+                .andDo(print())
+                .andExpect(status().is(400)).andReturn().getResponse().getContentAsString();
+
+        // assertar que el mensaje es correcto
+        assertEquals("Error: " + Player.NotPlayersTurn + "Julio", resp);
+    }
+
+
     // === Métodos auxiliares ===
 
     private UUID newMatch(String... players) throws Exception {
@@ -228,13 +254,12 @@ public class UnoControllerTest {
 
     private List<JsonCard> getPlayerHand(UUID matchId) throws Exception {
         String content = mockMvc.perform(get("/playerhand/" + matchId))
-                .andDo(print())
                 .andExpect(status().is(200))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(content, new TypeReference<List<JsonCard>>() {});
+
+        return new ObjectMapper().readValue(content, new TypeReference<List<JsonCard>>() {});
     }
 
     private String json(Object o) throws JsonProcessingException {

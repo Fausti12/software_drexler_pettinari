@@ -22,7 +22,7 @@ public class controller {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegal(IllegalArgumentException exc) {
         System.err.println("IllegalArgumentException: " + exc.getMessage()); // o usar logger
-        return ResponseEntity.badRequest().body("Error inesperado. Intente nuevamente.");
+        return ResponseEntity.badRequest().body("Error: " + exc.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
