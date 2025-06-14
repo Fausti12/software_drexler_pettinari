@@ -1,67 +1,49 @@
 package org.udesa.unoapplication.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.udesa.unoapplication.model.*;
+import org.udesa.unoapplication.model.Card;
+import org.udesa.unoapplication.model.Match;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UnoService {
+    @Autowired private Dealer dealer;
+    private Map<UUID, Match> sessions = new HashMap<UUID, Match>();
+    public static String invalidId = "Invalid match ID";
 
-    private final Map<UUID, Match> matches = new HashMap<>();
-
-    public UUID createNewMatch(List<String> players) {
-        List<Card> deck = fullDeck();
-        Collections.shuffle(deck);
-        Match match = Match.fullMatch(deck, players); //repartir 7 cartas
-        UUID id = UUID.randomUUID();
-        matches.put(id, match);
-        return id;
+    public UUID newMatch(List<String > players){
+        UUID newKey = UUID.randomUUID();
+        sessions.put(newKey, Match.fullMatch(dealer.fullDeck(), players));
+        return newKey;
     }
 
-    public void play(UUID matchId, String player, Card card) {
-        getMatch(matchId).play(player, card);
-    }
-
-    public void drawCard(UUID matchId, String player) {
-        getMatch(matchId).drawCard(player);
-    }
-
-    public Card visibleCard(UUID matchId) {
-        return getMatch(matchId).activeCard();
-    }
-
-    public List<Card> handOfCurrentPlayer(UUID matchId) {
+    public List<Card> playerHand(UUID matchId){
+        System.out.println("hola");
         return getMatch(matchId).playerHand();
     }
 
+    public void play(UUID matchId, String player, Card card){
+        getMatch(matchId).play(player, card);
+    }
+
+    public Card activeCard(UUID matchId){
+        return getMatch(matchId).activeCard();
+    }
+
+    public void drawCard(UUID matchId, String player){
+        getMatch(matchId).drawCard(player);
+    }
+
     private Match getMatch(UUID matchId) {
-        Match match = matches.get(matchId);
-        if (match == null) throw new IllegalArgumentException("Invalid match ID");
+        Match match = sessions.get(matchId);
+        if (match == null) throw new IllegalArgumentException(invalidId);
         return match;
     }
 
 
-    private List<Card> fullDeck() {
-        List<Card> deck = new ArrayList<>();
-        String[] colors = { "Red", "Green", "Blue", "Yellow" };
-
-        for (String color : colors) {
-            deck.add(new NumberCard(color, 0));
-            for (int i = 1; i <= 9; i++) {
-                deck.add(new NumberCard(color, i));
-                deck.add(new NumberCard(color, i)); // dos de cada número
-            }
-            for (int i = 0; i < 2; i++) {
-                deck.add(new SkipCard(color));
-                deck.add(new ReverseCard(color));
-                deck.add(new Draw2Card(color));
-            }
-        }
-        for (int i = 0; i < 4; i++) {
-            deck.add(new WildCard());
-        }
-
-        return deck;
-    }
 }
