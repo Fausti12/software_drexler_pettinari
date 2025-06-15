@@ -46,6 +46,7 @@ public class UnoControllerTest {
         assertNotNull(id);
     }
 
+
     @Test public void testCanGetActiveCard() throws Exception {
         String id = newMatch("Miguel", "Jorge");
         JsonCard card = getActiveCard(id);
@@ -61,6 +62,7 @@ public class UnoControllerTest {
         assertEquals(new JsonCard("Red", 5, "NumberCard", false).toString(), hand.getFirst().toString());
     }
 
+
     @Test public void testCanDrawCard() throws Exception {
         String id = newMatch("Miguel", "Jorge");
         List<JsonCard> before = getPlayerHand(id);
@@ -68,6 +70,7 @@ public class UnoControllerTest {
         List<JsonCard> after = getPlayerHand(id);
         assertEquals(before.size() + 1, after.size());
     }
+
 
     @Test public void testCanPlayValidCard() throws Exception {
         String id = newMatch("Miguel", "Jorge");
@@ -78,6 +81,7 @@ public class UnoControllerTest {
         assertEquals(6,  getPlayerHand(id).size());
     }
 
+
     @Test public void testCanNotPlayOnInvalidMatchId() throws Exception {
         mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -85,6 +89,7 @@ public class UnoControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
 
     @Test public void testPlayerWrongTurn() throws Exception {
         String id = newMatch("Miguel", "Jorge");
@@ -99,7 +104,6 @@ public class UnoControllerTest {
 
         assertEquals("Illegal Argument: " + Player.NotPlayersTurn + "Jorge", resp);
     }
-
 
 
     @Test public void testCannotCreateMatchWithDuplicateNames() throws Throwable {
@@ -125,9 +129,10 @@ public class UnoControllerTest {
 
 
     @Test public void testPlayWithMalformedJson() throws Exception {
+        String id = newMatch("Miguel", "Jorge");
         String malformedJson = "{\"color\":\"Red\",\"number\":3,\"type\":\"NumberCard\",\"shout\":false"; // falta cierre }
 
-        String resp = mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
+        String resp = mockMvc.perform(post("/play/" + id + "/Miguel")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(malformedJson))
                 .andDo(print())
