@@ -1,7 +1,9 @@
 package org.udesa.unoapplication.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class Match {
@@ -9,6 +11,7 @@ public class Match {
     public static String EmptyPlayersName = "Player with no name";
     public static String NotACardInHand = "Not a card in hand of ";
     public static String CardDoNotMatch = "Card does not match Color, Number or Kind";
+    public static String DuplicatePlayerNames = "There are duplicate player names.";
     private Function<GameStatus, GameStatus> reverseShift;
     private Function<GameStatus, GameStatus> nextShift;
     private GameStatus status;
@@ -53,11 +56,11 @@ public class Match {
         Player player = status.player();
 
         if (!player.hasCard(aCard)) {
-            throw new IllegalArgumentException(NotACardInHand + playerName); //cambiado
+            throw new RuntimeException(NotACardInHand + playerName);
         }
 
         if (!discardPileHead.acceptsOnTop(aCard)) {
-            throw new IllegalArgumentException(CardDoNotMatch);
+            throw new RuntimeException(CardDoNotMatch);
         }
 
         player.removeCard(aCard);
@@ -107,12 +110,18 @@ public class Match {
     }
 
     private void checkValidPlayerList(List<String> players) {
+        if (players.stream().anyMatch(name -> name.trim().isEmpty())) {
+            throw new IllegalArgumentException(EmptyPlayersName);
+        }
+
         if (players.size() < 2) {
             throw new IllegalArgumentException(InvalidNumberOfPlayers);
         }
 
-        if (players.stream().anyMatch(name -> name.trim().isEmpty())) {
-            throw new IllegalArgumentException(EmptyPlayersName);
+        // Hay nombres repetidos
+        Set<String> uniqueNames = new HashSet<>(players);
+        if (uniqueNames.size() != players.size()) {
+            throw new IllegalArgumentException(DuplicatePlayerNames);
         }
 
     }

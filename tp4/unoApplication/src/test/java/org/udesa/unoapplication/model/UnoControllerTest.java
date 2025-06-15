@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UnoControllerTest {
-    @Autowired UnoController controller;
     @Autowired MockMvc mockMvc;
     @MockBean Dealer dealer;
 
@@ -51,12 +50,15 @@ public class UnoControllerTest {
         String id = newMatch("Miguel", "Jorge");
         JsonCard card = getActiveCard(id);
         assertNotNull(card);
+        assertEquals(new JsonCard("Red", 3, "NumberCard", false).toString(), card.toString());
     }
 
     @Test public void testCanGetPlayerHand() throws Exception {
         String id = newMatch("Miguel", "Jorge");
         List<JsonCard> hand = getPlayerHand(id);
         assertFalse(hand.isEmpty());
+        assertEquals(7, hand.size());
+        assertEquals(new JsonCard("Red", 5, "NumberCard", false).toString(), hand.getFirst().toString());
     }
 
     @Test public void testCanDrawCard() throws Exception {
@@ -69,20 +71,19 @@ public class UnoControllerTest {
 
     @Test public void testCanPlayValidCard() throws Exception {
         String id = newMatch("Miguel", "Jorge");
-        JsonCard cardFirstPlayer = getPlayerHand(id).get(0);
+        JsonCard cardFirstPlayer = getPlayerHand(id).getFirst();
         play(id, "Miguel", cardFirstPlayer);
-        JsonCard cardSecondPlayer = getPlayerHand(id).get(0);
+        JsonCard cardSecondPlayer = getPlayerHand(id).getFirst();
         play(id, "Jorge", cardSecondPlayer);
         assertEquals(6,  getPlayerHand(id).size());
     }
 
-
     @Test public void testCanNotPlayOnInvalidMatchId() throws Exception {
-    mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
-           .contentType(MediaType.APPLICATION_JSON)
-           .content(json(new JsonCard("Red", 2, "NumberCard", false))))
-           .andDo(print())
-           .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(new JsonCard("Red", 2, "NumberCard", false))))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test public void testPlayerWrongTurn() throws Exception {
@@ -91,12 +92,51 @@ public class UnoControllerTest {
         List<JsonCard> cards = getPlayerHand(id);
 
         String resp = mockMvc.perform(post("/play/" + id + "/Jorge")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(cards.getFirst().toString()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(cards.getFirst().toString()))
                 .andDo(print())
                 .andExpect(status().is(400)).andReturn().getResponse().getContentAsString();
 
-        assertEquals("Illegal Argument:" + Player.NotPlayersTurn + "Jorge", resp);
+        assertEquals("Illegal Argument: " + Player.NotPlayersTurn + "Jorge", resp);
+    }
+
+
+
+    @Test public void testCannotCreateMatchWithDuplicateNames() throws Throwable {
+        String resp = mockMvc.perform(post("/newmatch?players=Ana&players=Ana"))
+                .andDo(print())
+                .andExpect(status().is(400))
+                .andReturn().getResponse().getContentAsString();
+
+        assertEquals("Illegal Argument: " + Match.DuplicatePlayerNames, resp);
+    }
+
+    @Test public void testPlayWithoutCardContent() throws Exception {
+        String id = newMatch("Miguel", "Jorge");
+        mockMvc.perform(post("/play/" + id + "/Miguel")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test  public void testCannotCreateMatchWithNoPlayers() throws Exception {
+        mockMvc.perform(post("/newmatch"))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test public void testPlayWithMalformedJson() throws Exception {
+        String malformedJson = "{\"color\":\"Red\",\"number\":3,\"type\":\"NumberCard\",\"shout\":false"; // falta cierre }
+
+        String resp = mockMvc.perform(post("/play/" + UUID.randomUUID() + "/Miguel")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(malformedJson))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertTrue(resp.startsWith("Malformed or incomplete JSON:"), "Mensaje: " + resp);
     }
 
 

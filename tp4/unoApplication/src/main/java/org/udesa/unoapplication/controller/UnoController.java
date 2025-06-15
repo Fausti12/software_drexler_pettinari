@@ -22,7 +22,7 @@ public class UnoController {
     // Manejo de errores
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegal(IllegalArgumentException exc) {
-        return ResponseEntity.badRequest().body("Illegal Argument:" + exc.getMessage());
+        return ResponseEntity.badRequest().body("Illegal Argument: " + exc.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
