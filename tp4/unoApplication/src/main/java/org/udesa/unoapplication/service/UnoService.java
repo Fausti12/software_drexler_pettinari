@@ -23,7 +23,6 @@ public class UnoService {
     }
 
     public List<Card> playerHand(UUID matchId){
-        System.out.println("hola");
         return getMatch(matchId).playerHand();
     }
 
